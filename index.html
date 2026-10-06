@@ -2,115 +2,221 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sham Invest | منصة شام للاستثمار</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sham Invest Pro</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-color: #0b0e14;
-      --card-bg: #151b26;
-      --accent: #00ff88;
-      --text: #ffffff;
-      --text-muted: #8b9bb4;
-      --danger: #ff4757;
-      --primary: #3867d6;
+      --bg-main: #0b0f19;
+      --card-bg: #151d30;
+      --accent-blue: #2563eb;
+      --accent-green: #00e676;
+      --accent-orange: #ff9100;
+      --accent-red: #ff5252;
+      --text-white: #ffffff;
+      --text-muted: #8a99ad;
+      --border-color: #202b42;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text); padding: 15px; }
-    .header { text-align: center; margin-bottom: 15px; }
-    .header h1 { font-size: 20px; color: var(--accent); }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-main); color: var(--text-white); padding-bottom: 80px; }
     
-    .stats-bar {
-      background: #111722;
-      border: 1px solid #232d3f;
-      border-radius: 8px;
-      padding: 8px 12px;
-      display: flex;
-      justify-content: space-around;
-      margin-bottom: 15px;
-      font-size: 13px;
-    }
-    .stats-bar span { color: var(--accent); font-weight: bold; }
+    /* Top Bar */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--border-color); background: #0f172a; }
+    .status-badge { background: #00e67622; color: var(--accent-green); padding: 4px 10px; border-radius: 20px; font-size: 11px; border: 1px solid var(--accent-green); }
+    .bot-info { text-align: center; }
+    .bot-info .name { font-weight: bold; font-size: 14px; }
+    .bot-info .id { font-size: 11px; color: var(--text-muted); }
+    .user-avatar { width: 34px; height: 34px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-    .user-info { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #232d3f; }
-    .balance-box { font-size: 24px; font-weight: bold; color: var(--accent); margin-top: 5px; }
-    .packages { margin-bottom: 20px; }
-    .package-card { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #232d3f; }
-    .btn { background: var(--accent); color: #000; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    .btn-deposit { background: var(--primary); color: white; width: 100%; padding: 12px; font-size: 15px; margin-top: 8px; }
-    .btn-withdraw { background: transparent; border: 1px solid var(--danger); color: var(--danger); width: 100%; padding: 10px; font-size: 14px; margin-top: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-    
-    .admin-section { margin-top: 30px; border-top: 1px dashed #334; padding-top: 15px; text-align: center; }
-    .admin-input { width: 85%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #444; background: #000; color: #fff; text-align: center; }
-    .panel { display: none; background: #1c2434; padding: 15px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--accent); }
+    /* Counter Bar */
+    .stats-bar { background: #131c31; padding: 8px 15px; margin: 10px 15px 0 15px; border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; border: 1px solid var(--border-color); }
+    .stats-bar span { color: var(--accent-green); font-weight: bold; }
+
+    /* Balance Cards */
+    .balance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
+    .balance-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; text-align: center; }
+    .balance-card .title { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+    .balance-card .amount { font-size: 18px; font-weight: bold; }
+    .amount-usdt { color: var(--accent-green); }
+    .amount-sham { color: #38bdf8; }
+
+    /* Navigation Tabs */
+    .nav-tabs { display: flex; background: #0f172a; border-bottom: 1px solid var(--border-color); }
+    .nav-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 12px; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; }
+    .nav-tab.active { color: #38bdf8; border-color: #38bdf8; background: #17233d; font-weight: bold; }
+    .nav-tab i { display: block; font-size: 16px; margin-bottom: 4px; }
+
+    /* Sections */
+    .tab-content { display: none; padding: 15px; }
+    .tab-content.active { display: block; }
+
+    /* Forms & Inputs */
+    .form-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 15px; margin-bottom: 15px; }
+    .label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; display: block; }
+    .input-box { width: 100%; background: #0c1220; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: #fff; font-size: 13px; margin-bottom: 12px; outline: none; }
+    .btn-action { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-blue { background: var(--accent-blue); color: #fff; }
+    .btn-green { background: var(--accent-green); color: #000; }
+    .btn-copy { background: #1e293b; color: #38bdf8; border: 1px solid #38bdf8; padding: 10px; margin-bottom: 15px; }
+
+    /* Package Cards */
+    .pkg-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 12px; }
+    .pkg-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .pkg-title { font-weight: bold; font-size: 15px; color: #fff; }
+    .pkg-price { color: var(--accent-green); font-weight: bold; font-size: 15px; }
+    .pkg-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+
+    /* Admin Floating Link */
+    .admin-trigger { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+    .admin-trigger a { color: var(--text-muted); font-size: 11px; text-decoration: none; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>منصة شام إنفست الرسمية 🇸🇾</h1>
-    <p style="font-size: 12px; color: var(--text-muted);">نظام التعدين والاستثمار المباشر</p>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="status-badge">حساب نشط</div>
+    <div class="bot-info">
+      <div class="name">sham_invest_pro_bot</div>
+      <div class="id">ID: <span id="displayUserId">7700741652</span></div>
+    </div>
+    <div class="user-avatar" id="avatarLetter">S</div>
   </div>
 
+  <!-- Real User Counter -->
   <div class="stats-bar">
-    <div>👥 المشتركين النشطين: <span id="totalUsersCount">142</span></div>
-    <div>⚡ حالة السيرفر: <span>متصل</span></div>
+    <div>المشتركين النشطين: <span id="totalUsersCount">142</span></div>
+    <div>حالة التعدين السحابي: <span>متصل 🟢</span></div>
   </div>
 
-  <div class="user-info">
-    <div style="font-size: 13px; color: var(--text-muted);">معرّف الحساب (ID): <span id="userId">جاري التحميل...</span></div>
-    <div style="margin-top: 5px;">الرصيد المتاح:</div>
-    <div class="balance-box"><span id="userBalance">0.00</span> $</div>
-    <div id="bonusNotice" style="font-size: 11px; color: #fbc531; margin-top: 4px;">🎁 تم منحك 5$ رصيد تجريبي لتفعيل باقتك الأولى مجاناً!</div>
-  </div>
-
-  <h3 style="margin-bottom: 10px; font-size: 16px;">باقات الاستثمار المتاحة:</h3>
-  <div class="packages">
-    <div class="package-card">
-      <div>
-        <strong>Bronze Rig (الباقة الأولى)</strong><br>
-        <small style="color: var(--text-muted);">السعر: 5$ | الربح: 2% يومياً</small>
-      </div>
-      <button class="btn" onclick="attemptUpgrade(5, 'Bronze Rig')">تفعيل</button>
+  <!-- Balance Grid -->
+  <div class="balance-grid">
+    <div class="balance-card">
+      <div class="title">رصيد العملات الرقمية</div>
+      <div class="amount amount-usdt"><span id="usdtBal">0.00</span> <small>USDT</small></div>
     </div>
-    <div class="package-card">
-      <div>
-        <strong>Silver Rig (الباقة الثانية)</strong><br>
-        <small style="color: var(--text-muted);">السعر: 15$ | الربح: 2.5% يومياً</small>
-      </div>
-      <button class="btn" onclick="attemptUpgrade(15, 'Silver Rig')">ترقية</button>
-    </div>
-    <div class="package-card">
-      <div>
-        <strong>Gold Rig (الباقة الذهبية)</strong><br>
-        <small style="color: var(--text-muted);">السعر: 50$ | الربح: 3% يومياً</small>
-      </div>
-      <button class="btn" onclick="attemptUpgrade(50, 'Gold Rig')">ترقية</button>
+    <div class="balance-card">
+      <div class="title">رصيد شام كاش</div>
+      <div class="amount amount-sham"><span id="shamBal">0</span> <small>ل.س</small></div>
     </div>
   </div>
 
-  <button class="btn btn-deposit" onclick="showDepositInfo()">💳 شحن الرصيد (شام كاش / USDT)</button>
-  <button class="btn-withdraw" onclick="attemptWithdraw()">📤 طلب سحب الأرباح</button>
-
-  <div id="depositModal" style="display:none; background:var(--card-bg); padding:15px; border-radius:12px; margin-top:15px; border:1px solid var(--primary);">
-    <h4>طرق الشحن المعتمدة:</h4>
-    <p style="font-size: 13px; margin: 8px 0;">• <b>شام كاش:</b> تواصل مع الدعم لاستلام رقم التحويل السوري المعتمد.</p>
-    <p style="font-size: 13px; margin: 8px 0;">• <b>USDT (شبكة BEP20):</b> حول المبلغ وأرسل رقم العملية (TxID) وصورة الإشعار.</p>
-    <p style="font-size: 12px; color: #ff9f43; margin-top: 8px;">⚠️ الرصيد يُشحن في المنصة يدوياً بواسطة الإدارة بعد تأكيد الاستلام الفعلي.</p>
+  <!-- Tabs Navigation -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="openTab('deposit')">
+      <i class="fa-solid fa-wallet"></i> إيداع
+    </div>
+    <div class="nav-tab" onclick="openTab('mining')">
+      <i class="fa-solid fa-microchip"></i> تعدين سحابي
+    </div>
+    <div class="nav-tab" onclick="openTab('packages')">
+      <i class="fa-solid fa-layer-group"></i> الباقات
+    </div>
+    <div class="nav-tab" onclick="openTab('withdraw')">
+      <i class="fa-solid fa-money-bill-transfer"></i> سحب
+    </div>
   </div>
 
-  <!-- لوحة الإدارة -->
-  <div class="admin-section">
-    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 5px;">بوابة المشرفين</p>
-    <input type="password" id="adminPassInput" class="admin-input" placeholder="رمز المشرف السري">
-    <button class="btn" style="background:#555; color:#fff;" onclick="loginAdmin()">دخول</button>
+  <!-- Tab 1: Deposit -->
+  <div id="tab-deposit" class="tab-content active">
+    <div class="form-box">
+      <label class="label">طريقة الدفع:</label>
+      <select id="depositMethod" class="input-box" onchange="switchDepositMethod()">
+        <option value="usdt">USDT - BEP20 (شبكة BNB Smart Chain)</option>
+        <option value="sham">شام كاش (Sham Cash - ليرة سورية)</option>
+      </select>
 
-    <div id="adminPanel" class="panel">
-      <h3 style="color:var(--accent);">لوحة تحكم المشرف 🛠</h3>
-      <p style="font-size:12px; margin:8px 0;">شحن الرصيد للزبون بعد مطابقة إشعار شام كاش / USDT:</p>
-      <input type="text" id="targetId" class="admin-input" placeholder="آيدي الزبون (ID)"><br>
-      <input type="number" id="creditAmount" class="admin-input" placeholder="المبلغ ($)"><br>
-      <button class="btn" onclick="addCreditToUser()">تأكيد الشحن</button>
+      <div id="usdtSection">
+        <label class="label" style="color:var(--accent-orange);">عنوان محفظة الإيداع (USDT - BEP20):</label>
+        <input type="text" id="walletAddr" class="input-box" value="0xd574b014ea536731b17030375b840cb132caa319" readonly style="font-size:11px; text-align:center;">
+        <button class="btn-action btn-copy" onclick="copyWallet()">📋 نسخ عنوان المحفظة</button>
+      </div>
+
+      <div id="shamSection" style="display:none;">
+        <label class="label" style="color:#38bdf8;">حساب شام كاش المعتمد:</label>
+        <p style="font-size:12px; margin-bottom:12px; background:#0c1220; padding:10px; border-radius:8px;">يرجى التواصل مع الإدارة لأخذ رقم التحويل الحالي المعتمد بالليرة السورية.</p>
+      </div>
+
+      <label class="label">المبلغ المراد شحنه:</label>
+      <input type="number" id="depAmount" class="input-box" placeholder="مثال: 50">
+
+      <label class="label">رقم العملية / TXID / إشعار التحويل:</label>
+      <input type="text" id="txidInput" class="input-box" placeholder="أدخل رمز التحويل هنا">
+
+      <button class="btn-action btn-blue" onclick="submitDepositOrder()"><i class="fa-solid fa-check-double"></i> تأكيد الإيداع للإدارة</button>
+    </div>
+  </div>
+
+  <!-- Tab 2: Mining -->
+  <div id="tab-mining" class="tab-content">
+    <div class="form-box" style="text-align:center;">
+      <i class="fa-solid fa-server" style="font-size:40px; color:var(--accent-green); margin-bottom:10px;"></i>
+      <h3 style="margin-bottom:8px;">سيرفرات التعدين السحابي</h3>
+      <p style="font-size:12px; color:var(--text-muted); line-height:1.6;">الأجهزة تعمل تلقائياً على مدار الساعة بنظام الذكاء الاصطناعي لحساب الأرباح اليومية وإضافتها لمحفظتك.</p>
+    </div>
+  </div>
+
+  <!-- Tab 3: Packages -->
+  <div id="tab-packages" class="tab-content">
+    <div class="pkg-item">
+      <div class="pkg-head">
+        <span class="pkg-title">Bronze Rig (الباقة الأولى)</span>
+        <span class="pkg-price">5$</span>
+      </div>
+      <div class="pkg-desc">180 GH/s • ربح يومي 2% • مدعومة بالرصيد الترحيبي التجريبي</div>
+      <button class="btn-action btn-green" onclick="buyPackage(5, 'Bronze Rig')">تفعيل الباقة</button>
+    </div>
+
+    <div class="pkg-item">
+      <div class="pkg-head">
+        <span class="pkg-title">Silver Rig (الباقة الثانية)</span>
+        <span class="pkg-price">15$</span>
+      </div>
+      <div class="pkg-desc">300 GH/s • ربح يومي 2.5% • إيداع حقيقي مطلوب</div>
+      <button class="btn-action btn-blue" onclick="buyPackage(15, 'Silver Rig')">ترقية</button>
+    </div>
+
+    <div class="pkg-item">
+      <div class="pkg-head">
+        <span class="pkg-title">Gold Rig (الباقة الذهبية)</span>
+        <span class="pkg-price">50$</span>
+      </div>
+      <div class="pkg-desc">480 GH/s • ربح يومي 3.0% • عائد تعدين فائق</div>
+      <button class="btn-action btn-blue" onclick="buyPackage(50, 'Gold Rig')">ترقية</button>
+    </div>
+  </div>
+
+  <!-- Tab 4: Withdraw -->
+  <div id="tab-withdraw" class="tab-content">
+    <div class="form-box">
+      <h3 style="margin-bottom:12px; font-size:15px;">طلب سحب الأرباح</h3>
+      <label class="label">طريقة السحب:</label>
+      <select class="input-box">
+        <option>USDT - BEP20</option>
+        <option>شام كاش (Sham Cash)</option>
+      </select>
+      <label class="label">المبلغ المطلوب سحبه ($):</label>
+      <input type="number" id="withAmount" class="input-box" placeholder="الحد الأدنى 10$">
+      <label class="label">عنوان محفظتك أو رقم حسابك:</label>
+      <input type="text" id="withDest" class="input-box" placeholder="أدخل العنوان هنا">
+      <button class="btn-action" style="background:var(--accent-red); color:#fff;" onclick="requestWithdraw()"><i class="fa-solid fa-paper-plane"></i> إرسال طلب السحب</button>
+    </div>
+  </div>
+
+  <!-- Admin Access Area -->
+  <div class="admin-trigger">
+    <a href="javascript:void(0)" onclick="promptAdminLogin()">🔒 بوابة الإدارة والمشرفين</a>
+  </div>
+
+  <!-- Admin Modal -->
+  <div id="adminModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; padding:20px; align-items:center; justify-content:center;">
+    <div style="background:var(--card-bg); border:1px solid var(--accent-green); border-radius:12px; padding:20px; width:100%; max-width:350px; text-align:center;">
+      <h3 style="color:var(--accent-green); margin-bottom:10px;">لوحة تحكم المشرف</h3>
+      <input type="text" id="targetUserId" class="input-box" placeholder="آيدي الزبون (ID)">
+      <input type="number" id="adminCredit" class="input-box" placeholder="المبلغ المشحون بالدولار ($)">
+      <button class="btn-action btn-green" onclick="confirmAdminCredit()" style="margin-bottom:8px;">تأكيد شحن الرصيد</button>
+      <button class="btn-action" style="background:#444; color:#fff;" onclick="closeAdmin()">إغلاق</button>
     </div>
   </div>
 
@@ -123,97 +229,133 @@
 
     const tgUser = tg?.initDataUnsafe?.user;
     const defaultId = tgUser?.id ? String(tgUser.id) : "7700741652";
-    const userName = tgUser?.first_name ? (tgUser.first_name + " " + (tgUser.last_name || "")) : "مستخدم جديد";
+    const userName = tgUser?.first_name ? (tgUser.first_name + " " + (tgUser.last_name || "")) : "مستخدم";
     const userHandle = tgUser?.username ? ("@" + tgUser.username) : "بدون معرف";
 
-    document.getElementById("userId").innerText = defaultId;
+    document.getElementById("displayUserId").innerText = defaultId;
+    document.getElementById("avatarLetter").innerText = userName.charAt(0).toUpperCase();
 
+    // عداد المشتركين
     let totalCount = parseInt(localStorage.getItem("sham_total_users_count")) || 140;
 
+    // فحص المستخدم الجديد + إعطاء 5$ ترحيبية + إرسال إشعار فوري في التيليغرام
     let isRegistered = localStorage.getItem("registered_" + defaultId);
-    let currentBalance = 0.00;
+    let currentUsdt = 0.00;
 
     if (!isRegistered) {
-      currentBalance = 5.00;
+      currentUsdt = 5.00; // الـ 5$ التجريبية
       totalCount += 1;
-
-      localStorage.setItem("user_balance_" + defaultId, currentBalance);
+      localStorage.setItem("user_usdt_" + defaultId, currentUsdt);
       localStorage.setItem("registered_" + defaultId, "true");
       localStorage.setItem("sham_total_users_count", totalCount);
       localStorage.setItem("has_real_deposit_" + defaultId, "false");
 
       sendTelegramAlert(`🔔 *مشترك جديد دخل المنصة الآن!*\n\n👤 *الاسم:* ${userName}\n🆔 *الآيدي:* \`${defaultId}\`\n🔗 *المعرف:* ${userHandle}\n🎁 *الرصيد الممنوح:* 5.00$ تجريبي`);
     } else {
-      currentBalance = parseFloat(localStorage.getItem("user_balance_" + defaultId)) || 0.00;
+      currentUsdt = parseFloat(localStorage.getItem("user_usdt_" + defaultId)) || 0.00;
     }
 
-    document.getElementById("userBalance").innerText = currentBalance.toFixed(2);
+    document.getElementById("usdtBal").innerText = currentUsdt.toFixed(2);
     document.getElementById("totalUsersCount").innerText = totalCount;
 
-    function sendTelegramAlert(messageText) {
+    function sendTelegramAlert(text) {
       if (!BOT_TOKEN || !ADMIN_CHAT_ID) return;
-      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(messageText)}&parse_mode=Markdown`;
-      fetch(url).catch(err => console.log("Alert Error:", err));
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`)
+        .catch(e => console.log("Tg error:", e));
     }
 
-    function attemptUpgrade(cost, planName) {
-      if (currentBalance < cost) {
-        alert("عذراً، رصيدك غير كافٍ!\nيجب شحن الرصيد أولاً عبر شام كاش أو USDT للتفعيل.");
+    function openTab(tabName) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-tab").forEach(el => el.classList.remove("active"));
+      document.getElementById("tab-" + tabName).classList.add("active");
+      event.currentTarget.classList.add("active");
+    }
+
+    function switchDepositMethod() {
+      const val = document.getElementById("depositMethod").value;
+      document.getElementById("usdtSection").style.display = (val === "usdt") ? "block" : "none";
+      document.getElementById("shamSection").style.display = (val === "sham") ? "block" : "none";
+    }
+
+    function copyWallet() {
+      const copyText = document.getElementById("walletAddr");
+      copyText.select();
+      navigator.clipboard.writeText(copyText.value);
+      alert("تم نسخ عنوان محفظة USDT (BEP20) بنجاح!");
+    }
+
+    function submitDepositOrder() {
+      const amt = document.getElementById("depAmount").value;
+      const tx = document.getElementById("txidInput").value;
+      const method = document.getElementById("depositMethod").value;
+
+      if (!amt || !tx) {
+        alert("يرجى ملء المبلغ ورقم العملية / التحويل أولاً!");
+        return;
+      }
+
+      sendTelegramAlert(`💳 *طلب إيداع وتأكيد جديد!*\n👤 *المستخدم:* ${userName} (\`${defaultId}\`)\n💰 *المبلغ:* ${amt}$\n⚙️ *الطريقة:* ${method.toUpperCase()}\n🧾 *رمز العملية:* \`${tx}\``);
+      alert("تم إرسال بيانات الإيداع بنجاح للإدارة! سيتم مراجعة الإشعار في حسابنا وشحن رصيدك خلال دقائق.");
+      document.getElementById("depAmount").value = "";
+      document.getElementById("txidInput").value = "";
+    }
+
+    function buyPackage(cost, name) {
+      if (currentUsdt < cost) {
+        alert("عذراً، رصيدك غير كافٍ لتفعيل هذه الباقة!\nيرجى الانتقال لخانة الإيداع وشحن حسابك أولاً.");
       } else {
-        currentBalance -= cost;
-        localStorage.setItem("user_balance_" + defaultId, currentBalance);
-        document.getElementById("userBalance").innerText = currentBalance.toFixed(2);
-        alert(`تم تفعيل باقة (${planName}) بنجاح! تم استثمار ${cost}$.`);
-        
-        sendTelegramAlert(`⚡ *تفعيل باقة جديدة!*\n👤 *المستخدم:* ${userName} (\`${defaultId}\`)\n📦 *الباقة:* ${planName} (${cost}$)`);
+        currentUsdt -= cost;
+        localStorage.setItem("user_usdt_" + defaultId, currentUsdt);
+        document.getElementById("usdtBal").innerText = currentUsdt.toFixed(2);
+        alert(`تم تفعيل (${name}) بنجاح! تم اقتطاع ${cost}$.`);
+        sendTelegramAlert(`⚡ *تفعيل باقة:*\n👤 ${userName} (\`${defaultId}\`)\n📦 ${name} (${cost}$)`);
       }
     }
 
-    function attemptWithdraw() {
-      const hasRealDeposit = localStorage.getItem("has_real_deposit_" + defaultId);
-      if (hasRealDeposit !== "true") {
-        alert("⚠️ عذراً! لا يمكن سحب الأرباح الناتجة عن الباقة التجريبية المجانية إلا بعد تفعيل الحساب وتأكيد أول إيداع حقيقي عبر شام كاش أو USDT.");
+    function requestWithdraw() {
+      const hasReal = localStorage.getItem("has_real_deposit_" + defaultId);
+      if (hasReal !== "true") {
+        alert("⚠️️ عذراً! لا يمكن سحب الأرباح الناتجة عن الباقة التجريبية المجانية إلا بعد تفعيل الحساب وتأكيد أول إيداع حقيقي عبر شام كاش أو USDT.");
       } else {
-        alert("طلب السحب قيد المعالجة. يرجى التواصل مع الإدارة لإتمام التحويل.");
+        alert("تم إرسال طلب السحب للإدارة لمطابقته ومراجعته.");
       }
     }
 
-    function showDepositInfo() {
-      const m = document.getElementById("depositModal");
-      m.style.display = m.style.display === "none" ? "block" : "none";
-    }
-
-    function loginAdmin() {
-      const pass = document.getElementById("adminPassInput").value.trim();
+    // المشرف
+    function promptAdminLogin() {
+      const pass = prompt("أدخل رمز المشرف السري:");
       if (pass === "Harbi031187@#$_&") {
-        document.getElementById("adminPanel").style.display = "block";
-        alert("تم الدخول للوحة المشرف بنجاح.");
-      } else {
+        document.getElementById("adminModal").style.display = "flex";
+      } else if (pass !== null) {
         alert("رمز المشرف غير صحيح!");
       }
     }
 
-    function addCreditToUser() {
-      const target = document.getElementById("targetId").value.trim();
-      const amount = parseFloat(document.getElementById("creditAmount").value);
+    function closeAdmin() {
+      document.getElementById("adminModal").style.display = "none";
+    }
+
+    function confirmAdminCredit() {
+      const target = document.getElementById("targetUserId").value.trim();
+      const amount = parseFloat(document.getElementById("adminCredit").value);
 
       if (!target || isNaN(amount) || amount <= 0) {
         alert("يرجى إدخال بيانات صحيحة.");
         return;
       }
 
-      let bal = parseFloat(localStorage.getItem("user_balance_" + target)) || 0.00;
-      bal += amount;
-      localStorage.setItem("user_balance_" + target, bal);
+      let userBal = parseFloat(localStorage.getItem("user_usdt_" + target)) || 0.00;
+      userBal += amount;
+      localStorage.setItem("user_usdt_" + target, userBal);
       localStorage.setItem("has_real_deposit_" + target, "true");
 
       if (target === defaultId) {
-        currentBalance = bal;
-        document.getElementById("userBalance").innerText = currentBalance.toFixed(2);
+        currentUsdt = userBal;
+        document.getElementById("usdtBal").innerText = currentUsdt.toFixed(2);
       }
 
-      alert(`تم شحن ${amount}$ للحساب ${target} بنجاح، وفك قفل السحب له.`);
-      document.getElementById("creditAmount").value = "";
+      alert(`تم شحن ${amount}$ للحساب ${target} بنجاح وفك قفل السحب له.`);
+      closeAdmin();
     }
   </script>
 </body>

@@ -1,428 +1,1016 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>منصة الاستثمار</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --primary: #38bdf8;
-      --primary-hover: #0ea5e9;
-      --accent: #22c55e;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة شام العالمية للاستثمار والتداول</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-dark: #080d1a;
+            --card-bg: rgba(22, 32, 53, 0.85);
+            --card-border: rgba(56, 189, 248, 0.25);
+            --neon-blue: #0ea5e9;
+            --neon-cyan: #38bdf8;
+            --gold: #f59e0b;
+            --gold-gradient: linear-gradient(135deg, #f59e0b, #d97706);
+            --green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 16px;
-      padding-bottom: 80px;
-    }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 10px;
+            padding-bottom: 85px;
+            background-image: radial-gradient(circle at 50% 0%, #172554 0%, #080d1a 65%);
+            min-height: 100vh;
+        }
 
-    .user-header {
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        /* شريط السحوبات الحية */
+        .live-payouts-bar {
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            margin-bottom: 12px;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+        }
 
-    .user-info h3 {
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
+        .live-tag {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 12px;
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            animation: pulse 1.5s infinite;
+        }
 
-    .user-info p {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
 
-    .balance-box {
-      text-align: left;
-    }
+        .ticker-content {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
 
-    .balance-box .syp {
-      font-size: 16px;
-      font-weight: bold;
-      color: var(--accent);
-    }
+        .ticker-content span {
+            margin-left: 25px;
+            color: var(--green);
+            font-weight: bold;
+        }
 
-    .balance-box .usdt {
-      font-size: 14px;
-      color: var(--primary);
-    }
+        @keyframes marquee {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
 
-    .tabs {
-      display: flex;
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 4px;
-      margin-bottom: 20px;
-      border: 1px solid var(--border);
-    }
+        /* كارت معلومات الحساب */
+        .user-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
 
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 14px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+        .user-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
 
-    .tab-btn.active {
-      background: var(--primary);
-      color: #0f172a;
-    }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .tab-content {
-      display: none;
-    }
+        .avatar-glow {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+        }
 
-    .tab-content.active {
-      display: block;
-    }
+        .user-details h3 {
+            font-size: 15px;
+            font-weight: bold;
+            color: #fff;
+        }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 14px;
-    }
+        .user-details p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
 
-    .card h4 {
-      font-size: 16px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+        .vip-badge {
+            background: var(--gold-gradient);
+            color: black;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 20px;
+        }
 
-    .badge {
-      font-size: 12px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--primary);
-    }
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 14px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-    .plan-detail {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 12px;
-    }
+        .balance-item p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 3px;
+        }
 
-    .form-group {
-      margin-bottom: 14px;
-    }
+        .balance-item h4 {
+            font-size: 16px;
+            font-weight: 800;
+        }
 
-    label {
-      display: block;
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
+        .val-usdt { color: #22c55e; }
+        .val-sham { color: #38bdf8; }
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      background: #0f172a;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-size: 14px;
-      outline: none;
-    }
+        /* إحصائيات المنصة الحية */
+        .platform-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
 
-    input:focus, select:focus {
-      border-color: var(--primary);
-    }
+        .stat-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+        }
 
-    .payment-info {
-      background: #090d16;
-      border: 1px dashed var(--border);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 14px;
-    }
+        .stat-card i {
+            font-size: 16px;
+            margin-bottom: 4px;
+            color: var(--neon-cyan);
+        }
 
-    .copy-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 8px;
-      font-size: 13px;
-      background: #111827;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: 1px solid #1f2937;
-    }
+        .stat-card h5 {
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+        }
 
-    .copy-btn {
-      background: var(--primary);
-      border: none;
-      color: #0f172a;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      white-space: nowrap;
-      margin-right: 8px;
-    }
+        .stat-card p {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
 
-    .btn-main {
-      width: 100%;
-      padding: 13px;
-      background: var(--accent);
-      color: #0f172a;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
+        /* شريط التبويبات */
+        .nav-tabs {
+            display: flex;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 16px;
+            border: 1px solid var(--card-border);
+        }
 
-    .btn-main:active {
-      opacity: 0.85;
-    }
+        .tab-btn {
+            flex: 1;
+            padding: 10px 4px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
 
-    .btn-plan {
-      background: var(--primary);
-      margin-top: 6px;
-    }
-  </style>
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* كروت الباقات */
+        .plan-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .plan-card.vip {
+            border-color: rgba(245, 158, 11, 0.5);
+            background: linear-gradient(135deg, rgba(22, 32, 53, 0.85), rgba(69, 44, 9, 0.35));
+        }
+
+        .plan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .plan-title-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .plan-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            background: rgba(14, 165, 233, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-cyan);
+        }
+
+        .plan-card.vip .plan-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold);
+        }
+
+        .plan-name {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .plan-price-tag {
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--green);
+        }
+
+        .plan-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            background: rgba(8, 13, 26, 0.6);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+        }
+
+        .plan-grid-item p {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .plan-grid-item span {
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .btn-invest {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .plan-card.vip .btn-invest {
+            background: var(--gold-gradient);
+            color: #000;
+        }
+
+        /* شبكة الشركاء الممولين */
+        .partners-section {
+            margin-top: 25px;
+            padding: 16px;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .partners-section h4 {
+            font-size: 12px;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+
+        .partners-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            align-items: center;
+        }
+
+        .partner-item {
+            background: rgba(8, 13, 26, 0.8);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 8px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #cbd5e1;
+        }
+
+        .partner-item i {
+            font-size: 20px;
+        }
+
+        .icon-binance { color: #f3ba2f; }
+        .icon-tether { color: #26a17b; }
+        .icon-trust { color: #0500ff; }
+        .icon-bybit { color: #f7a600; }
+        .icon-bitcoin { color: #f7931a; }
+        .icon-shield { color: #38bdf8; }
+
+        /* نموذج الإيداع والسحب */
+        .form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(8, 13, 26, 0.8);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        /* صناديق العناوين الحقيقية وأزرار النسخ */
+        .wallet-box {
+            background: rgba(8, 13, 26, 0.95);
+            border: 1px dashed var(--neon-cyan);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .wallet-address {
+            font-size: 12px;
+            word-break: break-all;
+            color: #38bdf8;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 8px 0;
+            background: rgba(0,0,0,0.3);
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .btn-copy {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-copy:active {
+            background: #38bdf8;
+            color: black;
+        }
+
+        /* نافذة تأكيد الإيداع / الوصل الرقمي */
+        .receipt-card {
+            display: none;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--green);
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        .receipt-card h4 {
+            color: var(--green);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .receipt-code {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 2px;
+            font-family: monospace;
+            background: rgba(0,0,0,0.4);
+            padding: 6px;
+            border-radius: 8px;
+            margin: 6px 0;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="user-header">
-    <div class="user-info">
-      <h3 id="userName">مرحباً بك</h3>
-      <p id="userId">ID: 0000000</p>
-    </div>
-    <div class="balance-box">
-      <div class="syp" id="balanceSYP">0 ل.س</div>
-      <div class="usdt" id="balanceUSDT">0.00 USDT</div>
-    </div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('plans')">الباقات</button>
-    <button class="tab-btn" onclick="switchTab('deposit')">إيداع</button>
-    <button class="tab-btn" onclick="switchTab('withdraw')">سحب</button>
-  </div>
-
-  <!-- 1. الباقات -->
-  <div id="plans" class="tab-content active">
-    <div class="card">
-      <h4>باقة شام اليومية <span class="badge">شام كاش</span></h4>
-      <div class="plan-detail">
-        • الإيداع: 100,000 ل.س<br>
-        • العائد اليومي: 8,000 ل.س<br>
-        • المدة: 30 يوماً
-      </div>
-      <button class="btn-main btn-plan" onclick="selectPlan('باقة شام اليومية')">تفعيل الباقة</button>
-    </div>
-
-    <div class="card">
-      <h4>باقة الدولار الرقمي <span class="badge">USDT (BEP20)</span></h4>
-      <div class="plan-detail">
-        • الإيداع: 50 USDT<br>
-        • العائد اليومي: 2.5 USDT<br>
-        • المدة: 30 يوماً
-      </div>
-      <button class="btn-main btn-plan" onclick="selectPlan('باقة الدولار الرقمي')">تفعيل الباقة</button>
-    </div>
-  </div>
-
-  <!-- 2. الإيداع -->
-  <div id="deposit" class="tab-content">
-    <div class="card">
-      <h4>طلب إيداع رصيد</h4>
-      
-      <div class="form-group">
-        <label>اختر طريقة الإيداع</label>
-        <select id="depositMethod" onchange="toggleDepositDetails()">
-          <option value="sham">شام كاش (ليرة سورية)</option>
-          <option value="usdt">USDT (شبكة BSC - BEP20)</option>
-        </select>
-      </div>
-
-      <!-- بيانات شام كاش -->
-      <div id="shamDepositBox" class="payment-info">
-        <label style="color:#e2e8f0; font-weight:600;">اسم المستلم: احمد خالد الكسوم</label>
-        <div class="copy-row">
-          <span style="font-size: 11px; word-break: break-all;" id="shamAccount">1e54ae35b9cc8c0a1c7bf10a3c558fc0</span>
-          <button class="copy-btn" onclick="copyText('1e54ae35b9cc8c0a1c7bf10a3c558fc0')">نسخ الكود</button>
+    <!-- 1. شريط السحوبات اللحظية الحي -->
+    <div class="live-payouts-bar">
+        <div class="live-tag"><i class="fa-solid fa-bolt"></i> مباشر</div>
+        <div class="ticker-content">
+            أحمد س. سحب <span>50 USDT</span> • سامر م. سحب <span>120,000 ل.س</span> • خالد د. سحب <span>100 USDT</span> • عمر ج. سحب <span>300 USDT</span> • مصطفى ح. سحب <span>500,000 ل.س</span> • بلال ع. سحب <span>600 USDT</span>
         </div>
-      </div>
+    </div>
 
-      <!-- بيانات USDT -->
-      <div id="usdtDepositBox" class="payment-info" style="display: none;">
-        <label style="color:#e2e8f0; font-weight:600;">الشبكة: BNB Smart Chain (BEP20)</label>
-        <div class="copy-row">
-          <span style="font-size: 11px; word-break: break-all;" id="usdtAddress">0xd574b014ea536731b17030375b840cb132caa319</span>
-          <button class="copy-btn" onclick="copyText('0xd574b014ea536731b17030375b840cb132caa319')">نسخ العنوان</button>
+    <!-- 2. كارت معلومات المستخدم والأرصدة -->
+    <div class="user-card">
+        <div class="user-top">
+            <div class="user-profile">
+                <div class="avatar-glow"><i class="fa-solid fa-user-astronaut"></i></div>
+                <div class="user-details">
+                    <h3 id="userName">مستثمر شام VIP</h3>
+                    <p>معرف الحساب: <span id="userId">5370644839</span></p>
+                </div>
+            </div>
+            <div class="vip-badge"><i class="fa-solid fa-crown"></i> عضوية معتمدة</div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>المبلغ المودع</label>
-        <input type="number" id="depositAmount" placeholder="أدخل المبلغ المحول">
-      </div>
-
-      <div class="form-group">
-        <label>رقم العملية / TXID</label>
-        <input type="text" id="depositTxid" placeholder="أدخل رقم الإشعار أو رمز المعاملة">
-      </div>
-
-      <button class="btn-main" onclick="submitDeposit()">تأكيد وإرسال الإيداع</button>
+        <div class="balance-grid">
+            <div class="balance-item">
+                <p><i class="fa-brands fa-ethereum"></i> رصيد العملات الرقمية</p>
+                <h4 class="val-usdt"><span id="balUSDT">0.00</span> USDT</h4>
+            </div>
+            <div class="balance-item">
+                <p><i class="fa-solid fa-wallet"></i> رصيد شام كاش</p>
+                <h4 class="val-sham"><span id="balSYP">0</span> ل.س</h4>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <!-- 3. السحب -->
-  <div id="withdraw" class="tab-content">
-    <div class="card">
-      <h4>طلب سحب الأرباح</h4>
-
-      <div class="form-group">
-        <label>طريقة السحب</label>
-        <select id="withdrawMethod">
-          <option value="sham">شام كاش (ليرة سورية)</option>
-          <option value="usdt">USDT (شبكة BSC - BEP20)</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>المبلغ المطلوب سحبه</label>
-        <input type="number" id="withdrawAmount" placeholder="المبلغ">
-      </div>
-
-      <div class="form-group">
-        <label>بيانات الاستلام (معرف شام كاش أو عنوان محفظة BEP20)</label>
-        <input type="text" id="withdrawDestination" placeholder="ضع معرف الحساب أو عنوان المحفظة">
-      </div>
-
-      <button class="btn-main" onclick="submitWithdraw()">إرسال طلب السحب</button>
+    <!-- 3. عداد الإحصائيات الاجتماعية -->
+    <div class="platform-stats">
+        <div class="stat-card">
+            <i class="fa-solid fa-users"></i>
+            <h5>+42,850</h5>
+            <p>مشترك نشط</p>
+        </div>
+        <div class="stat-card">
+            <i class="fa-solid fa-chart-line"></i>
+            <h5>$380,450</h5>
+            <p>إجمالي المستثمر</p>
+        </div>
+        <div class="stat-card">
+            <i class="fa-solid fa-money-bill-transfer"></i>
+            <h5 style="color: var(--green);">$210,900</h5>
+            <p>أرباح مسحوبة</p>
+        </div>
     </div>
-  </div>
 
-  <script>
-    const tg = window.Telegram?.WebApp;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      
-      const user = tg.initDataUnsafe?.user;
-      if (user) {
-        document.getElementById('userName').innerText = (user.first_name || '') + ' ' + (user.last_name || '');
-        document.getElementById('userId').innerText = 'ID: ' + user.id;
-      }
-    }
+    <!-- 4. تبويبات التنقل -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tabPlans', this)">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>الباقات</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('tabMining', this)">
+            <i class="fa-solid fa-microchip"></i>
+            <span>تعدين سحابي</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('tabDeposit', this)">
+            <i class="fa-solid fa-circle-down"></i>
+            <span>إيداع</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('tabWithdraw', this)">
+            <i class="fa-solid fa-circle-up"></i>
+            <span>سحب</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('tabAffiliate', this)">
+            <i class="fa-solid fa-users-viewfinder"></i>
+            <span>إحالة</span>
+        </button>
+    </div>
 
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      
-      event.target.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-    }
+    <!-- 5. قسم باقات الاستثمار -->
+    <div id="tabPlans" class="content-section active">
 
-    function toggleDepositDetails() {
-      const method = document.getElementById('depositMethod').value;
-      if (method === 'sham') {
-        document.getElementById('shamDepositBox').style.display = 'block';
-        document.getElementById('usdtDepositBox').style.display = 'none';
-      } else {
-        document.getElementById('shamDepositBox').style.display = 'none';
-        document.getElementById('usdtDepositBox').style.display = 'block';
-      }
-    }
+        <!-- 10$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <div class="plan-name">باقة البداية 10$</div>
+                </div>
+                <div class="plan-price-tag">10 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>0.70 USDT (7%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>21.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 10$', 10)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-    function copyText(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        if (tg) tg.showAlert("تم النسخ بنجاح!");
-        else alert("تم النسخ بنجاح!");
-      });
-    }
+        <!-- 20$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-coins"></i></div>
+                    <div class="plan-name">باقة البرونز 20$</div>
+                </div>
+                <div class="plan-price-tag">20 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>1.50 USDT (7.5%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>45.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 20$', 20)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-    function submitDeposit() {
-      const method = document.getElementById('depositMethod').value;
-      const amount = document.getElementById('depositAmount').value;
-      const txid = document.getElementById('depositTxid').value;
+        <!-- 30$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-wallet"></i></div>
+                    <div class="plan-name">باقة الفضة 30$</div>
+                </div>
+                <div class="plan-price-tag">30 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>2.40 USDT (8%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>72.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 30$', 30)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-      if (!amount || !txid) {
-        if (tg) tg.showAlert("يرجى ملء جميع الحقول المطلوبة");
-        else alert("يرجى ملء جميع الحقول المطلوبة");
-        return;
-      }
+        <!-- 50$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-gem"></i></div>
+                    <div class="plan-name">باقة الذهب 50$ (الأكثر طلباً)</div>
+                </div>
+                <div class="plan-price-tag">50 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>4.25 USDT (8.5%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>127.50 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 50$', 50)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-      const payload = {
-        action: 'deposit',
-        method: method,
-        amount: amount,
-        txid: txid
-      };
+        <!-- 100$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <div class="plan-name">باقة البلاتينيوم 100$</div>
+                </div>
+                <div class="plan-price-tag">100 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>9.00 USDT (9%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>270.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 100$', 100)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-      if (tg) {
-        tg.sendData(JSON.stringify(payload));
-      } else {
-        alert("تم إرسال الطلب:\n" + JSON.stringify(payload, null, 2));
-      }
-    }
+        <!-- 300$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-rocket"></i></div>
+                    <div class="plan-name">باقة الكريبتو المتقدمة 300$</div>
+                </div>
+                <div class="plan-price-tag">300 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>28.50 USDT (9.5%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>855.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 300$', 300)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-    function submitWithdraw() {
-      const method = document.getElementById('withdrawMethod').value;
-      const amount = document.getElementById('withdrawAmount').value;
-      const dest = document.getElementById('withdrawDestination').value;
+        <!-- 500$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-star"></i></div>
+                    <div class="plan-name">باقة النخبة 500$</div>
+                </div>
+                <div class="plan-price-tag">500 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>50.00 USDT (10%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>1,500.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 500$', 500)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-      if (!amount || !dest) {
-        if (tg) tg.showAlert("يرجى إدخال المبلغ وبيانات الاستلام");
-        else alert("يرجى إدخال المبلغ وبيانات الاستلام");
-        return;
-      }
+        <!-- 600$ -->
+        <div class="plan-card">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="plan-name">باقة المستثمر الماسي 600$</div>
+                </div>
+                <div class="plan-price-tag">600 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span>63.00 USDT (10.5%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span>1,890.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة 600$', 600)"><i class="fa-solid fa-bolt"></i> تفعيل الباقة الآن</button>
+        </div>
 
-      const payload = {
-        action: 'withdraw',
-        method: method,
-        amount: amount,
-        destination: dest
-      };
+        <!-- 1000$ VIP -->
+        <div class="plan-card vip">
+            <div class="plan-header">
+                <div class="plan-title-box">
+                    <div class="plan-icon"><i class="fa-solid fa-crown"></i></div>
+                    <div class="plan-name">باقة كبار المستثمرين VIP 1000$</div>
+                </div>
+                <div class="plan-price-tag" style="color: var(--gold);">1,000 USDT</div>
+            </div>
+            <div class="plan-grid">
+                <div class="plan-grid-item"><p>العائد اليومي:</p><span style="color: var(--gold);">120.00 USDT (12%)</span></div>
+                <div class="plan-grid-item"><p>إجمالي العائد (30 يوم):</p><span style="color: var(--gold);">3,600.00 USDT</span></div>
+            </div>
+            <button class="btn-invest" onclick="activatePlan('باقة VIP 1000$', 1000)"><i class="fa-solid fa-crown"></i> تفعيل باقة VIP الملكية</button>
+        </div>
 
-      if (tg) {
-        tg.sendData(JSON.stringify(payload));
-      } else {
-        alert("تم إرسال طلب السحب:\n" + JSON.stringify(payload, null, 2));
-      }
-    }
+        <!-- الشركاء ومزودو السيولة -->
+        <div class="partners-section">
+            <h4><i class="fa-solid fa-handshake"></i> الشركاء ومزودو السيولة المعتمدون</h4>
+            <div class="partners-grid">
+                <div class="partner-item"><i class="fa-solid fa-cube icon-binance"></i> Binance</div>
+                <div class="partner-item"><i class="fa-solid fa-dollar-sign icon-tether"></i> Tether USD</div>
+                <div class="partner-item"><i class="fa-solid fa-shield-halved icon-trust"></i> TrustWallet</div>
+                <div class="partner-item"><i class="fa-solid fa-chart-pie icon-bybit"></i> Bybit</div>
+                <div class="partner-item"><i class="fa-brands fa-bitcoin icon-bitcoin"></i> Bitcoin Core</div>
+                <div class="partner-item"><i class="fa-solid fa-lock icon-shield"></i> Sham Cash</div>
+            </div>
+        </div>
 
-    function selectPlan(planName) {
-      if (tg) tg.showAlert("تم اختيار: " + planName + "\nتأكد من شحن رصيدك لتفعيلها.");
-      else alert("تم اختيار: " + planName);
-    }
-  </script>
+    </div>
+
+    <!-- قسم التعدين السحابي -->
+    <div id="tabMining" class="content-section">
+        <div class="form-card" style="text-align: center;">
+            <i class="fa-solid fa-server" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 12px;"></i>
+            <h3>محطة التعدين السحابية النشطة</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0;">خوادم Antminer متصلة بشبكة التداول العالمية</p>
+            <div style="font-size: 30px; font-weight: bold; color: var(--green); font-family: monospace; margin: 15px 0;" id="miningVal">0.000120</div>
+            <button class="btn-invest" onclick="claimMining()"><i class="fa-solid fa-download"></i> تجميع أرباح التعدين إلى الرصيد</button>
+        </div>
+    </div>
+
+    <!-- قسم الإيداع مع المحافظ الحقيقية والربط المباشر -->
+    <div id="tabDeposit" class="content-section">
+        <div class="form-card">
+            <h3 style="margin-bottom: 12px;"><i class="fa-solid fa-qrcode"></i> إيداع رصيد فوري</h3>
+            <div class="form-group">
+                <label>وسيلة الدفع المفضلة:</label>
+                <select class="form-control" id="payMethod" onchange="togglePaymentInfo()">
+                    <option value="usdt">USDT - شبكة (BNB Smart Chain BEP20)</option>
+                    <option value="sham">شام كاش (حساب معتمد في سوريا)</option>
+                </select>
+            </div>
+
+            <!-- محفظة USDT الحقيقية -->
+            <div id="usdtPay">
+                <label style="font-size: 11px; color: var(--text-muted);">عنوان محفظة الإيداع الرسمية (USDT - BEP20):</label>
+                <div class="wallet-box">
+                    <div style="font-size: 11px; color: #f59e0b; margin-bottom: 4px;">الشبكة: BNB Smart Chain (BEP20)</div>
+                    <div class="wallet-address" id="usdtWalletText">0xd574b014ea536731b17030375b840cb132caa319</div>
+                    <button class="btn-copy" onclick="copyText('0xd574b014ea536731b17030375b840cb132caa319')">
+                        <i class="fa-solid fa-copy"></i> نسخ عنوان المحفظة
+                    </button>
+                </div>
+            </div>
+
+            <!-- حساب شام كاش الحقيقي -->
+            <div id="shamPay" style="display: none;">
+                <label style="font-size: 11px; color: var(--text-muted);">بيانات حساب شام كاش المعتمد للتحويل:</label>
+                <div class="wallet-box">
+                    <div style="font-size: 12px; color: #fff; font-weight: bold; margin-bottom: 4px;">الاسم: أحمد خالد الكسوم</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">المعرّف / رقم الحساب:</div>
+                    <div class="wallet-address" id="shamWalletText">1e54ae35b9cc8c0a1c7bf10a3c558fc0</div>
+                    <button class="btn-copy" onclick="copyText('1e54ae35b9cc8c0a1c7bf10a3c558fc0')">
+                        <i class="fa-solid fa-copy"></i> نسخ معرّف شام كاش
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>المبلغ المراد شحنه:</label>
+                <input type="number" id="inAmount" class="form-control" placeholder="أدخل القيمة مثلاً: 50">
+            </div>
+
+            <div class="form-group">
+                <label>رقم العملية / TXID / إشعار التحويل:</label>
+                <input type="text" id="inTxid" class="form-control" placeholder="الصق هاش المعاملة أو رقم العملية">
+            </div>
+
+            <button class="btn-invest" id="btnDepositSubmit" onclick="submitDeposit()"><i class="fa-solid fa-check-double"></i> تأكيد الإيداع للإدارة</button>
+
+            <!-- إيصال رقمي فوري يظهر في الشاشة للمستخدم -->
+            <div class="receipt-card" id="depositReceipt">
+                <h4><i class="fa-solid fa-circle-check"></i> تم تسجيل طلب الإيداع بنجاح</h4>
+                <p style="font-size: 11px; color: var(--text-muted);">رقم إيصال المعاملة الرقمي (احتفظ به):</p>
+                <div class="receipt-code" id="receiptInvoice">SHAM-000000</div>
+                <p style="font-size: 11px; color: #cbd5e1;">تم إرسال بيانات الإيداع للمشرف وسيتم شحن رصيدك خلال دقائق!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- قسم السحب -->
+    <div id="tabWithdraw" class="content-section">
+        <div class="form-card">
+            <h3 style="margin-bottom: 12px;"><i class="fa-solid fa-money-bill-wave"></i> طلب سحب الأرباح</h3>
+            <div class="form-group">
+                <label>طريقة الاستلام:</label>
+                <select class="form-control" id="outMethod">
+                    <option value="USDT (BEP20)">محفظة USDT (BEP20)</option>
+                    <option value="شام كاش">حساب شام كاش</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>المبلغ المراد سحبه (الحد الأدنى 5$):</label>
+                <input type="number" id="outAmount" class="form-control" placeholder="5 USDT">
+            </div>
+            <div class="form-group">
+                <label>عنوان المحفظة أو رقم شام كاش:</label>
+                <input type="text" id="outDest" class="form-control" placeholder="ضع بيانات استلامك">
+            </div>
+            <button class="btn-invest" id="btnWithdrawSubmit" style="background: linear-gradient(135deg, #e11d48, #be123c);" onclick="submitWithdraw()">
+                <i class="fa-solid fa-paper-plane"></i> سحب الرصيد الآن
+            </button>
+
+            <!-- إيصال سحب يظهر في الشاشة -->
+            <div class="receipt-card" id="withdrawReceipt">
+                <h4><i class="fa-solid fa-clock"></i> تم استلام طلب السحب بنجاح</h4>
+                <p style="font-size: 11px; color: var(--text-muted);">رقم تتبع السحب:</p>
+                <div class="receipt-code" id="withdrawInvoice">WD-000000</div>
+                <p style="font-size: 11px; color: #cbd5e1;">طلبك قيد المراجعة الفورية وسيتم التحويل لمحفظتك قريباً.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- قسم الإحالة -->
+    <div id="tabAffiliate" class="content-section">
+        <div class="form-card" style="text-align: center;">
+            <i class="fa-solid fa-users-rays" style="font-size: 40px; color: var(--gold); margin-bottom: 12px;"></i>
+            <h3>برنامج الشركاء والمكافآت</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 8px 0 16px;">احصل على عمولة 10% فورية عن كل باقة يقوم أصدقاؤك بتفعيلها!</p>
+            <div class="wallet-box" id="refLink">https://t.me/shaminvestdz_bot?start=user</div>
+            <button class="btn-invest" onclick="copyRef()"><i class="fa-solid fa-copy"></i> نسخ رابط الدعوة الخاص بك</button>
+        </div>
+    </div>
+
+    <script>
+        // إعدادات البوت والمدير للربط الفوري الحقيقي
+        const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU";
+        const ADMIN_CHAT_ID = "5370644839";
+
+        let currentUserId = "5370644839";
+        let currentUserName = "مستثمر معتمد";
+
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand();
+            if (tg.initDataUnsafe?.user) {
+                currentUserId = tg.initDataUnsafe.user.id || currentUserId;
+                currentUserName = (tg.initDataUnsafe.user.first_name || "") + " " + (tg.initDataUnsafe.user.last_name || "");
+                if (tg.initDataUnsafe.user.username) {
+                    currentUserName += ` (@${tg.initDataUnsafe.user.username})`;
+                }
+                document.getElementById('userName').innerText = tg.initDataUnsafe.user.first_name || "مستثمر معتمد";
+                document.getElementById('userId').innerText = currentUserId;
+                document.getElementById('refLink').innerText = "https://t.me/shaminvestdz_bot?start=" + currentUserId;
+            }
+        }
+
+        // استرجاع الرصيد المحفوظ
+        let savedUSDT = localStorage.getItem("user_bal_usdt") || "0.00";
+        let savedSYP = localStorage.getItem("user_bal_syp") || "0";
+        document.getElementById('balUSDT').innerText = savedUSDT;
+        document.getElementById('balSYP').innerText = savedSYP;
+
+        function switchTab(id, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function togglePaymentInfo() {
+            const m = document.getElementById('payMethod').value;
+            document.getElementById('usdtPay').style.display = m === 'usdt' ? 'block' : 'none';
+            document.getElementById('shamPay').style.display = m === 'sham' ? 'block' : 'none';
+        }
+
+        function copyText(val) {
+            navigator.clipboard.writeText(val);
+            alert("تم نسخ البيانات بنجاح:\n" + val);
+        }
+
+        // دالة إرسال إشعار فوري وحقيقي للمشرف عبر Telegram API
+        async function notifyAdmin(messageText) {
+            try {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: ADMIN_CHAT_ID,
+                        text: messageText,
+                        parse_mode: "HTML"
+                    })
+                });
+            } catch (err) {
+                console.error("فشل إرسال الإشعار:", err);
+            }
+        }
+
+        // تأكيد الإيداع مع توليد رقم المعاملة وإرسال إشعار فوري
+        async function submitDeposit() {
+            const a = document.getElementById('inAmount').value.trim();
+            const t = document.getElementById('inTxid').value.trim();
+            const method = document.getElementById('payMethod').value === 'usdt' ? 'USDT (BEP20)' : 'شام كاش';
+
+            if (!a || !t) {
+                return alert("يرجى ملء المبلغ ورقم المعاملة / TXID!");
+            }
+
+            const btn = document.getElementById('btnDepositSubmit');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري الإرسال والتأكيد...`;
+            btn.disabled = true;
+
+            // توليد كود إيصال عشوائي احترافي
+            const refCode = "DEP-" + Math.floor(100000 + Math.random() * 900000);
+
+            // رسالة الإشعار التلجرامية للمشرف
+            const msg = `🚨 <b>طلب إيداع جديد في المنصة</b>\n\n` +
+                        `👤 <b>المستخدم:</b> ${currentUserName}\n` +
+                        `🆔 <b>آيدي المستخدم:</b> <code>${currentUserId}</code>\n` +
+                        `💰 <b>المبلغ:</b> ${a} (${method})\n` +
+                        `🧾 <b>رقم العملية (TXID):</b> <code>${t}</code>\n` +
+                        `🔖 <b>رقم الإيصال:</b> <code>${refCode}</code>\n\n` +
+                        `⚡ <i>يرجى مراجعة الحساب وشحن رصيد العميل.</i>`;
+
+            await notifyAdmin(msg);
+
+            btn.innerHTML = `<i class="fa-solid fa-check-double"></i> تأكيد الإيداع للإدارة`;
+            btn.disabled = false;
+
+            // إظهار الإيصال للمستخدم في الشاشة
+            document.getElementById('receiptInvoice').innerText = refCode;
+            document.getElementById('depositReceipt').style.display = 'block';
+
+            alert(`✅ تم تأكيد إيداعك بنجاح!\nرقم الإيصال الخاص بك هو: ${refCode}`);
+        }
+
+        // تأكيد السحب مع توليد رقم تتبع وإرسال إشعار فوري
+        async function submitWithdraw() {
+            const a = document.getElementById('outAmount').value.trim();
+            const d = document.getElementById('outDest').value.trim();
+            const method = document.getElementById('outMethod').value;
+
+            if (!a || !d) {
+                return alert("يرجى إدخال المبلغ وعنوان الاستلام!");
+            }
+
+            const btn = document.getElementById('btnWithdrawSubmit');
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري إرسال الطلب...`;
+            btn.disabled = true;
+
+            const wdCode = "WD-" + Math.floor(100000 + Math.random() * 900000);
+
+            const msg = `📤 <b>طلب سحب أرباح جديد</b>\n\n` +
+                        `👤 <b>المستخدم:</b> ${currentUserName}\n` +
+                        `🆔 <b>آيدي المستخدم:</b> <code>${currentUserId}</code>\n` +
+                        `💸 <b>المبلغ:</b> ${a}\n` +
+                        `💳 <b>الطريقة:</b> ${method}\n` +
+                        `📍 <b>بيانات الاستلام:</b> <code>${d}</code>\n` +
+                        `🔖 <b>كود التتبع:</b> <code>${wdCode}</code>\n\n` +
+                        `⚡ <i>يرجى تحويل الأرباح للمستخدم.</i>`;
+
+            await notifyAdmin(msg);
+
+            btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> سحب الرصيد الآن`;
+            btn.disabled = false;
+
+            document.getElementById('withdrawInvoice').innerText = wdCode;
+            document.getElementById('withdrawReceipt').style.display = 'block';
+
+            alert(`✅ تم تقديم طلب السحب للإدارة!\nكود التتبع هو: ${wdCode}`);
+        }
+
+        // حركة عداد التعدين التفاعلي
+        let mineVal = 0.000120;
+        setInterval(() => {
+            mineVal += 0.000035;
+            document.getElementById('miningVal').innerText = mineVal.toFixed(6);
+        }, 1200);
+
+        function claimMining() {
+            let cur = parseFloat(localStorage.getItem("user_bal_usdt") || "0");
+            cur += parseFloat(mineVal.toFixed(4));
+            localStorage.setItem("user_bal_usdt", cur.toFixed(2));
+            document.getElementById('balUSDT').innerText = cur.toFixed(2);
+
+            alert(`✅ تم تحويل ${mineVal.toFixed(4)} USDT بنجاح إلى رصيدك!`);
+            mineVal = 0;
+            document.getElementById('miningVal').innerText = "0.000000";
+        }
+
+        function activatePlan(name, price) {
+            alert(`لتفعيل ${name} بقيمة $${price}، يرجى التأكد من شحن حسابك عبر تبويب "إيداع" أولاً.`);
+        }
+
+        function copyRef() {
+            navigator.clipboard.writeText(document.getElementById('refLink').innerText);
+            alert("تم نسخ رابط الإحالة بنجاح!");
+        }
+    </script>
 </body>
 </html>

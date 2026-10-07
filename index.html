@@ -332,8 +332,8 @@
     const ADMIN_CHAT_ID = "5370644839";
     const ADMIN_PASS = "0666390904";
 
-    // معرّف اختبار Adsgram الصحيح (يبدأ بـ int- ومتبوع بأرقام)
-    const ADSGRAM_BLOCK_ID = "int-49";
+    // معرّف Adsgram الرسمي الحقيقي لتطبيقك المصغر
+    const ADSGRAM_BLOCK_ID = "52526";
 
     // رابط قاعدة بيانات Firebase
     const FIREBASE_DB = "https://sham-pro-invest-default-rtdb.firebaseio.com/users";
@@ -367,7 +367,7 @@
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
     document.getElementById('adminTargetId').value = currentUserId;
 
-    // تهيئة Adsgram
+    // تهيئة Adsgram بالرقم الحقيقي
     let AdController;
     try {
       if (window.Adsgram) {
@@ -390,7 +390,7 @@
         } catch(e){}
       }
 
-      statusText.innerText = "جاري تحميل الإعلان التجريبي...";
+      statusText.innerText = "جاري تحميل الإعلان...";
       
       AdController.show().then(async (result) => {
         // اكتمال المشاهدة بنجاح
@@ -411,7 +411,7 @@
         showToast(`🎉 أحسنت! تمت مشاهدة الفيديو وحصلت على +${rewardAmount}$`);
         statusText.innerText = "تمت إضافة المكافأة إلى رصيدك بنجاح ✓";
       }).catch((result) => {
-        showToast("لم تكتمل المشاهدة أو تم إغلاق الفيديو.");
+        showToast("لم تكتمل المشاهدة أو لا توجد إعلانات متوفرة الآن.");
         statusText.innerText = "يجب إكمال الفيديو للنهاية للحصول على المكافأة.";
       });
     }

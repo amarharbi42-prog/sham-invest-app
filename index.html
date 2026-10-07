@@ -125,7 +125,7 @@
       </div>
 
       <div id="shamSection" style="display:none;">
-        <label style="font-size: 11px; color: #38bdf8;">حساب شام كاش المعتمد (احمد خالد الكسوم):</label>
+        <label style="font-size: 11px; color: #38bdf8;">حساب شام كاش المعتمد:</label>
         <div class="copy-box" id="shamAddress">1e54ae35b9cc8c0a1c7bf10a3c558fc0</div>
         <button class="btn-action" style="background: rgba(56,189,248,0.2); border:1px solid #38bdf8; color:#38bdf8; font-size:12px; padding:8px; margin-bottom:12px;" onclick="copyVal('1e54ae35b9cc8c0a1c7bf10a3c558fc0')">نسخ رقم حساب شام كاش</button>
       </div>
@@ -180,7 +180,7 @@
     </div>
   </div>
 
-  <!-- 3. تبويب الباقات -->
+  <!-- 3. تبويب الباقات الخمس الأصلية -->
   <div id="plansTab" class="tab-content">
     <div style="font-size: 12px; color: #38bdf8; margin-bottom: 12px; font-weight: bold;" id="activePlansSummary">
       الباقة المفعّلة: لا توجد باقة نشطة حالياً
@@ -301,7 +301,7 @@
     let userHandle = "بدون معرف";
     let currentUserUSDT = 0.00;
 
-    // استخراج بيانات المستخدم من تيليغرام بأمان تام دون أخطاء
+    // استخراج بيانات المستخدم من تيليغرام بأمان
     try {
       if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();
@@ -318,7 +318,7 @@
       console.log("TG WebApp init:", err);
     }
 
-    // عرض بيانات المستخدم فوراً
+    // عرض بيانات المستخدم
     document.getElementById('userNameDisplay').innerText = currentUserName;
     document.getElementById('userIdDisplay').innerText = "ID: " + currentUserId;
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
@@ -344,7 +344,7 @@
     document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
     document.getElementById('totalUsersCount').innerText = totalCount;
 
-    // دالة إرسال الإشعار لتيليغرام المشرف
+    // إرسال الإشعار لتيليغرام المشرف
     function sendAdminAlert(textPlain) {
       if (!BOT_TOKEN || !ADMIN_CHAT_ID) return;
       try {
@@ -497,7 +497,7 @@
       document.getElementById('adminPassInput').value = '';
     }
 
-    // تشغيل محاكاة التعدين الحية والحرارة
+    // محاكاة جهاز التعدين والحرارة
     let liveProfit = 0.0000;
     setInterval(() => {
       const hashEl = document.getElementById("liveHashrate");

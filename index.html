@@ -332,8 +332,8 @@
     const ADMIN_CHAT_ID = "5370644839";
     const ADMIN_PASS = "0666390904";
 
-    // كود اختبار Adsgram الرسمي المعتمد للتأكد من اشتغال الفيديو 100%
-    const ADSGRAM_BLOCK_ID = "int-test";
+    // معرّف اختبار Adsgram الصحيح (يبدأ بـ int- ومتبوع بأرقام)
+    const ADSGRAM_BLOCK_ID = "int-49";
 
     // رابط قاعدة بيانات Firebase
     const FIREBASE_DB = "https://sham-pro-invest-default-rtdb.firebaseio.com/users";
@@ -377,7 +377,7 @@
       console.log("خطأ في تهيئة Adsgram", e);
     }
 
-    // دالة عرض الفيديو التجريبي واحتساب الرصيد
+    // دالة عرض الفيديو واحتساب الرصيد
     async function showRewardedAd() {
       const statusText = document.getElementById("adStatusText");
       if (!window.Adsgram) {
@@ -393,7 +393,7 @@
       statusText.innerText = "جاري تحميل الإعلان التجريبي...";
       
       AdController.show().then(async (result) => {
-        // اكتملت المشاهدة بنجاح
+        // اكتمال المشاهدة بنجاح
         const rewardAmount = 0.02;
         currentUserUSDT += rewardAmount;
         currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);

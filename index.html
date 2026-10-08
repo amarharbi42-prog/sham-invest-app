@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sham Invest Terminal</title>
+  <title>Sham Invest Pro Terminal</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -31,7 +31,7 @@
 </head>
 <body class="bg-cryptoDark text-slate-200 min-h-screen pb-24 font-sans select-none">
 
-  <!-- Top Institutional Bar -->
+  <!-- الشريط العلوي الحسابي -->
   <header class="bg-panelDark border-b border-borderDark px-4 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-md">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-md shadow-blue-500/20" id="userAvatar">U</div>
@@ -44,52 +44,43 @@
       </div>
     </div>
     <div class="text-left font-mono">
-      <span class="text-[10px] text-slate-400 block">إجمالي الرصيد</span>
+      <span class="text-[10px] text-slate-400 block">الرصيد المتاح</span>
       <span class="text-sm font-bold text-tradeGreen">$<span id="balUSDT">0.00</span></span>
     </div>
   </header>
 
-  <!-- Market Info Ribbon -->
+  <!-- شريط اختيار العملات وتبديل الأسواق المباشر -->
   <div class="bg-cryptoDark border-b border-borderDark px-4 py-2 flex items-center justify-between text-[11px] font-mono">
     <div class="flex items-center gap-2">
-      <span class="text-white font-bold">BTC/USDT</span>
-      <span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Spot</span>
+      <!-- قائمة اختيار العملة -->
+      <div class="relative">
+        <select id="marketPairSelect" onchange="changeCryptoPair(this.value)" class="bg-panelDark text-white border border-borderDark rounded-lg px-2 py-1 text-xs font-bold outline-none cursor-pointer">
+          <option value="BINANCE:BTCUSDT" selected>BTC/USDT</option>
+          <option value="BINANCE:ETHUSDT">ETH/USDT</option>
+          <option value="BINANCE:SOLUSDT">SOL/USDT</option>
+          <option value="BINANCE:BNBUSDT">BNB/USDT</option>
+          <option value="BINANCE:DOGEUSDT">DOGE/USDT</option>
+        </select>
+      </div>
+      <span class="text-[10px] bg-slate-800 text-tradeGreen px-1.5 py-0.5 rounded font-bold">Live 24h</span>
     </div>
-    <div class="flex gap-4">
+    <div class="flex gap-3 text-right">
       <div><span class="text-slate-500 text-[9px] block">رصيد شام كاش</span><span class="text-sky-400 font-bold" id="balSYP">0</span> ل.س</div>
       <div><span class="text-slate-500 text-[9px] block">الباقة النشطة</span><span class="text-amber-400 font-bold" id="activePlanText">بدون باقة</span></div>
     </div>
   </div>
 
-  <!-- Real Interactive Candlestick Chart (TradingView Advanced) -->
+  <!-- شارت الشموع اليابانية التفاعلي من TradingView -->
   <div class="w-full bg-panelDark border-b border-borderDark">
-    <div class="h-64 w-full">
-      <div class="tradingview-widget-container" style="height:100%;width:100%">
-        <div id="tradingview_full" style="height:100%;width:100%"></div>
-        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-        <script type="text/javascript">
-          new TradingView.widget({
-            "autosize": true,
-            "symbol": "BINANCE:BTCUSDT",
-            "interval": "15",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "ar_AE",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "hide_legend": true,
-            "save_image": false,
-            "container_id": "tradingview_full"
-          });
-        </script>
-      </div>
+    <div class="h-64 w-full" id="chartWrapper">
+      <!-- يتم تحميل الشارت ديناميكياً هنا عند تبديل العملة -->
+      <div id="tradingview_full" style="height:100%;width:100%"></div>
     </div>
   </div>
 
   <main class="max-w-md mx-auto px-3 mt-3 space-y-3">
 
-    <!-- Switch Screens Tabs (Terminal Navigation) -->
+    <!-- شريط التنقل بين الشاشات -->
     <div class="grid grid-cols-4 gap-1 bg-panelDark p-1 rounded-xl border border-borderDark text-xs font-semibold">
       <button class="nav-tab active py-2 rounded-lg bg-blue-600 text-white flex items-center justify-center gap-1 transition" onclick="switchView('tabTrade', this)">
         <i data-lucide="activity" class="w-3.5 h-3.5"></i> التداول
@@ -105,49 +96,51 @@
       </button>
     </div>
 
-    <!-- 1. شاشة منصة التداول وتنفيذ الأوامر (Trade Tab) -->
+    <!-- 1. شاشة منصة التداول وتنفيذ الأوامر الحقيقية المشروطة بالرصيد -->
     <div id="tabTrade" class="tab-content active space-y-3">
-      <!-- Order Execution Panel -->
-      <div class="bg-panelDark border border-borderDark rounded-xl p-3 space-y-3">
-        <div class="flex gap-2">
-          <button class="flex-1 py-2 bg-tradeGreen hover:opacity-90 text-slate-950 font-bold rounded-lg text-xs flex items-center justify-center gap-1">
-            <i data-lucide="trending-up" class="w-4 h-4"></i> شراء / Long
-          </button>
-          <button class="flex-1 py-2 bg-tradeRed hover:opacity-90 text-white font-bold rounded-lg text-xs flex items-center justify-center gap-1">
-            <i data-lucide="trending-down" class="w-4 h-4"></i> بيع / Short
-          </button>
-        </div>
-
+      <div class="bg-panelDark border border-borderDark rounded-xl p-3.5 space-y-3">
+        
         <div class="grid grid-cols-2 gap-2 text-xs">
           <div class="bg-cryptoDark p-2.5 rounded-lg border border-borderDark">
-            <span class="text-slate-400 block text-[10px] mb-1">اللوت / الكمية</span>
-            <input type="number" placeholder="0.10" class="w-full bg-transparent text-white font-mono outline-none font-bold">
+            <span class="text-slate-400 block text-[10px] mb-1">الهامش / المبلغ (USDT):</span>
+            <input type="number" id="tradeMargin" value="10" min="5" step="5" class="w-full bg-transparent text-white font-mono outline-none font-bold text-sm">
           </div>
           <div class="bg-cryptoDark p-2.5 rounded-lg border border-borderDark">
-            <span class="text-slate-400 block text-[10px] mb-1">الرافعة المالية</span>
-            <select class="w-full bg-transparent text-tradeGreen font-mono outline-none font-bold">
-              <option>1:50</option>
-              <option>1:100</option>
-              <option>1:200</option>
+            <span class="text-slate-400 block text-[10px] mb-1">الرافعة المالية:</span>
+            <select id="tradeLeverage" class="w-full bg-transparent text-tradeGreen font-mono outline-none font-bold">
+              <option value="10">10x</option>
+              <option value="20" selected>20x</option>
+              <option value="50">50x</option>
+              <option value="100">100x</option>
             </select>
           </div>
         </div>
 
-        <!-- Live Mining Node Info -->
-        <div class="p-3 bg-cryptoDark rounded-lg border border-borderDark flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <i data-lucide="cpu" class="w-5 h-5 text-tradeGreen animate-pulse"></i>
-            <div>
-              <div class="text-xs font-bold text-white">خادم التعدين السحابي</div>
-              <div class="text-[10px] text-slate-400">182.40 GH/s • كفاءة 99.9%</div>
-            </div>
-          </div>
-          <span class="text-[10px] bg-emerald-500/10 text-tradeGreen border border-emerald-500/20 px-2 py-0.5 rounded-md">أرباح جارية</span>
+        <!-- أزرار تنفيذ الشراء والبيع المشروطة -->
+        <div class="flex gap-2">
+          <button onclick="executeOrder('BUY')" class="flex-1 py-3 bg-tradeGreen hover:opacity-90 active:scale-95 text-slate-950 font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 transition">
+            <i data-lucide="trending-up" class="w-4 h-4"></i> شراء / Long
+          </button>
+          <button onclick="executeOrder('SELL')" class="flex-1 py-3 bg-tradeRed hover:opacity-90 active:scale-95 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-rose-500/20 transition">
+            <i data-lucide="trending-down" class="w-4 h-4"></i> بيع / Short
+          </button>
         </div>
+
+        <!-- قائمة الصفقات المفتوحة للمستخدم -->
+        <div class="pt-2 border-t border-borderDark/60">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[11px] font-bold text-slate-300">الصفقات المفتوحة</span>
+            <span class="text-[10px] text-slate-500" id="openOrdersCount">0 صفقات</span>
+          </div>
+          <div id="openPositionsContainer" class="space-y-2">
+            <div class="p-3 bg-cryptoDark/70 rounded-lg text-center text-[11px] text-slate-500">لا توجد صفقات مفتوحة حالياً</div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    <!-- 2. شاشة الباقات (Plans Tab) -->
+    <!-- 2. شاشة الباقات -->
     <div id="tabPlans" class="tab-content space-y-2">
       <div class="bg-panelDark border border-borderDark rounded-xl p-3 flex items-center justify-between">
         <div>
@@ -190,7 +183,7 @@
       </div>
     </div>
 
-    <!-- 3. شاشة الإيداع (Deposit Tab) -->
+    <!-- 3. شاشة الإيداع -->
     <div id="tabDeposit" class="tab-content space-y-3">
       <div class="bg-panelDark border border-borderDark rounded-xl p-4 space-y-3">
         <div>
@@ -218,7 +211,7 @@
         </div>
 
         <div>
-          <label class="block text-xs text-slate-400 mb-1">المبلغ المطلوب شحنه:</label>
+          <label class="block text-xs text-slate-400 mb-1">المبلغ المطلوب شحنه (USDT):</label>
           <input type="number" id="inAmount" class="w-full bg-cryptoDark border border-borderDark rounded-lg p-2.5 text-xs text-white outline-none" placeholder="50">
         </div>
         <div>
@@ -230,7 +223,7 @@
       </div>
     </div>
 
-    <!-- 4. شاشة السحب (Withdraw Tab) -->
+    <!-- 4. شاشة السحب -->
     <div id="tabWithdraw" class="tab-content space-y-3">
       <div class="bg-panelDark border border-borderDark rounded-xl p-4 space-y-3">
         <div>
@@ -260,6 +253,25 @@
     </div>
 
   </main>
+
+  <!-- نافذة التنبيه عند محاولة التداول بدون رصيد -->
+  <div id="depositAlertModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-panelDark border border-tradeRed/50 rounded-2xl p-5 w-full max-w-xs space-y-4 shadow-2xl text-center">
+      <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-tradeRed/30 flex items-center justify-center mx-auto text-tradeRed">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <div>
+        <h4 class="text-sm font-bold text-white mb-1">رصيدك غير كافٍ للتداول!</h4>
+        <p class="text-xs text-slate-400" id="depositAlertMsg">يجب عليك إيداع رصيد في حسابك أولاً حتى تتمكن من فتح صفقات البيع والشراء في السوق.</p>
+      </div>
+      <div class="space-y-2">
+        <button onclick="goToDeposit()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition">
+          <i data-lucide="wallet" class="w-4 h-4"></i> الذهاب إلى صفحة الإيداع
+        </button>
+        <button onclick="closeDepositAlert()" class="w-full py-2 bg-slate-800 text-slate-300 font-medium rounded-xl text-xs">إلغاء</button>
+      </div>
+    </div>
+  </div>
 
   <!-- نافذة المشرف المنبثقة -->
   <div id="adminModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
@@ -297,7 +309,10 @@
 
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs px-4 py-2 rounded-full shadow-2xl hidden z-50"></div>
 
-  <!-- سكربت التحكم والتشفير -->
+  <!-- مكتبة TradingView -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+  <!-- سكربت التحكم والتشفير وإدارة الأوامر -->
   <script>
     const _dec = (s) => atob(s);
     const _t = _dec("ODc3ODAwNzQ1MDpBQUdIdmY4Tmo3ZHVMeXpKX2VLR0tFaFNRelAyNV9XN1RIVQ==");
@@ -311,6 +326,8 @@
     let currentUserUSDT = 0.00;
     let currentUserSYP = 0;
     let currentUserPlan = "";
+    let currentSymbol = "BINANCE:BTCUSDT";
+    let openPositions = [];
     const SYP_RATE_PER_005 = 750;
 
     try {
@@ -331,6 +348,129 @@
     document.getElementById('userIdDisplay').innerText = "ID: " + currentUserId;
     document.getElementById('userAvatar').innerText = currentUserName.charAt(0).toUpperCase();
     document.getElementById('adminTargetId').value = currentUserId;
+
+    // دالة إنشاء وتحميل الشارت
+    function loadChart(symbol) {
+      document.getElementById('chartWrapper').innerHTML = '<div id="tradingview_full" style="height:100%;width:100%"></div>';
+      new TradingView.widget({
+        "autosize": true,
+        "symbol": symbol,
+        "interval": "15",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "ar_AE",
+        "enable_publishing": false,
+        "hide_top_toolbar": false,
+        "hide_legend": true,
+        "save_image": false,
+        "container_id": "tradingview_full"
+      });
+    }
+
+    // تبديل أزواج العملات ديناميكياً
+    function changeCryptoPair(pairSymbol) {
+      currentSymbol = pairSymbol;
+      loadChart(pairSymbol);
+      showToast("تم تحويل السوق إلى: " + pairSymbol.replace("BINANCE:", ""));
+    }
+
+    // دالة تنفيذ الصفقات مع فحص الرصيد والإيداع الصارم
+    function executeOrder(type) {
+      const margin = parseFloat(document.getElementById('tradeMargin').value);
+      const leverage = document.getElementById('tradeLeverage').value;
+      const pair = currentSymbol.replace("BINANCE:", "");
+
+      if (isNaN(margin) || margin <= 0) {
+        alert("يرجى إدخال مبلغ صالح للصفقة.");
+        return;
+      }
+
+      // شرط التحقق من الرصيد: إذا كان الرصيد غير كافٍ أو صفر
+      if (currentUserUSDT <= 0 || currentUserUSDT < margin) {
+        document.getElementById('depositAlertMsg').innerText = `رصيدك الحالي هو ($${currentUserUSDT.toFixed(2)}) وهو غير كافٍ لفتح صفقة بقيمة ($${margin.toFixed(2)}). يرجى إيداع رصيد لتفعيل التداول الحقيقي.`;
+        document.getElementById('depositAlertModal').classList.remove('hidden');
+        document.getElementById('depositAlertModal').classList.add('flex');
+        return;
+      }
+
+      // إذا كان يملك رصيداً: يتم خصم الهامش وتوثيق الصفقة
+      currentUserUSDT -= margin;
+      const position = {
+        id: Date.now(),
+        pair: pair,
+        type: type,
+        margin: margin,
+        leverage: leverage,
+        pnl: 0.00
+      };
+      openPositions.push(position);
+
+      // تحديث السيرفر والواجهة
+      updateServerBalance();
+      updateUI();
+      renderOpenPositions();
+      showToast(`تم فتح صفقة ${type === 'BUY' ? 'شراء' : 'بيع'} بنجاح!`);
+      sendAdminAlert(`📈 صفقة جديدة:\n- المستخدم: ${currentUserName}\n- النوع: ${type} ${pair}\n- الهامش: $${margin}\n- الرافعة: ${leverage}x`);
+    }
+
+    function renderOpenPositions() {
+      const container = document.getElementById('openPositionsContainer');
+      document.getElementById('openOrdersCount').innerText = `${openPositions.length} صفقات`;
+      if (openPositions.length === 0) {
+        container.innerHTML = '<div class="p-3 bg-cryptoDark/70 rounded-lg text-center text-[11px] text-slate-500">لا توجد صفقات مفتوحة حالياً</div>';
+        return;
+      }
+
+      container.innerHTML = openPositions.map(pos => `
+        <div class="bg-cryptoDark p-2.5 rounded-lg border border-borderDark flex items-center justify-between text-xs">
+          <div>
+            <div class="font-bold flex items-center gap-1.5">
+              <span class="${pos.type === 'BUY' ? 'text-tradeGreen' : 'text-tradeRed'}">${pos.type === 'BUY' ? 'شراء Long' : 'بيع Short'}</span>
+              <span class="text-white">${pos.pair}</span>
+              <span class="text-[9px] bg-slate-800 text-slate-300 px-1 rounded">${pos.leverage}x</span>
+            </div>
+            <div class="text-[10px] text-slate-400 mt-0.5">الهامش: $${pos.margin.toFixed(2)}</div>
+          </div>
+          <button onclick="closePosition(${pos.id})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[10px] font-bold rounded-md border border-borderDark">
+            إغلاق الصفقة
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function closePosition(posId) {
+      const idx = openPositions.findIndex(p => p.id === posId);
+      if (idx !== -1) {
+        currentUserUSDT += openPositions[idx].margin;
+        openPositions.splice(idx, 1);
+        updateServerBalance();
+        updateUI();
+        renderOpenPositions();
+        showToast("تم إغلاق الصفقة واسترجاع الهامش إلى محفظتك.");
+      }
+    }
+
+    function goToDeposit() {
+      closeDepositAlert();
+      const depositBtn = document.querySelectorAll('.nav-tab')[2];
+      switchView('tabDeposit', depositBtn);
+    }
+
+    function closeDepositAlert() {
+      document.getElementById('depositAlertModal').classList.add('hidden');
+      document.getElementById('depositAlertModal').classList.remove('flex');
+    }
+
+    async function updateServerBalance() {
+      try {
+        await fetch(`${_db}/${currentUserId}.json`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ balance: currentUserUSDT, activePlan: currentUserPlan })
+        });
+      } catch (e) {}
+    }
 
     function sendTgMessage(chatId, textPlain) {
       const url = `https://api.telegram.org/bot${_t}/sendMessage`;
@@ -353,7 +493,7 @@
           currentUserUSDT = parseFloat(data.balance);
           currentUserPlan = data.activePlan || "";
         } else if (!localStorage.getItem("init_u_" + currentUserId)) {
-          currentUserUSDT = 5.00;
+          currentUserUSDT = 0.00;
           currentUserPlan = "";
           localStorage.setItem("init_u_" + currentUserId, "1");
           await fetch(`${_db}/${currentUserId}.json`, {
@@ -420,14 +560,15 @@
     }
 
     async function buyPlan(name, price) {
-      if (currentUserUSDT < price) return alert("الرصيد غير كافٍ، يرجى الشحن أولاً");
+      if (currentUserUSDT < price) {
+        document.getElementById('depositAlertMsg').innerText = `رصيدك الحالي ($${currentUserUSDT.toFixed(2)}) غير كافٍ لشراء باقة ${name} ($${price}). يرجى شحن حسابك.`;
+        document.getElementById('depositAlertModal').classList.remove('hidden');
+        document.getElementById('depositAlertModal').classList.add('flex');
+        return;
+      }
       currentUserUSDT -= price;
       currentUserPlan = name;
-      await fetch(`${_db}/${currentUserId}.json`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ balance: currentUserUSDT, activePlan: currentUserPlan })
-      });
+      await updateServerBalance();
       updateUI();
       showToast(`تم تفعيل ${name}`);
       sendAdminAlert(`⚡ تفعيل باقة:\n- المستخدم: ${currentUserName}\n- الباقة: ${name}`);
@@ -439,11 +580,7 @@
       if (isNaN(amount) || amount < 10 || !addr) return alert("الحد الأدنى 10$ وعنوان المحفظة مطلوب");
       if (currentUserUSDT < amount) return alert("الرصيد غير كافٍ");
       currentUserUSDT -= amount;
-      await fetch(`${_db}/${currentUserId}.json`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ balance: currentUserUSDT })
-      });
+      await updateServerBalance();
       updateUI();
       sendAdminAlert(`💸 طلب سحب:\n- المشترك: ${currentUserName}\n- المبلغ: ${amount}$\n- العنوان: ${addr}`);
       showToast("تم إرسال طلب السحب");
@@ -475,6 +612,8 @@
       if (targetId === currentUserId) { currentUserPlan = plan; updateUI(); }
     }
 
+    // بدء التشغيل والشارت التلقائي
+    loadChart(currentSymbol);
     syncUserData();
     setInterval(syncUserData, 3000);
     lucide.createIcons();
